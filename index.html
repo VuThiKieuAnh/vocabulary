@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Từ Vựng Tiếng Anh</title>
+    <style>
+        :root {
+            --bg-color: #f0f4f8;
+            --container-bg: #ffffff;
+            --text-color: #333333;
+            --primary-color: #007bff;
+            --primary-hover: #0056b3;
+            --success-color: #28a745;
+            --error-color: #dc3545;
+            --card-bg: #eef2f5;
+            --vn-word-color: #d9534f;
+            --border-color: #cccccc;
+            --list-item-bg: #ffffff;
+            --list-item-border: #eeeeee;
+            --sync-bg: #fff3cd;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #1a1a1a;
+            --container-bg: #2d2d2d;
+            --text-color: #f0f0f0;
+            --primary-color: #375a7f;
+            --primary-hover: #4e7ca1;
+            --success-color: #00bc8c;
+            --error-color: #e74c3c;
+            --card-bg: #3a3a3a;
+            --vn-word-color: #f39c12;
+            --border-color: #444444;
+            --list-item-bg: #3a3a3a;
+            --list-item-border: #444444;
+            --sync-bg: #444444;
+        }
+
+        [data-theme="purple"] {
+            --bg-color: #f3e5f5;
+            --container-bg: #ffffff;
+            --primary-color: #8e24aa;
+            --primary-hover: #6a1b9a;
+            --card-bg: #f3e5f5;
+            --vn-word-color: #c2185b;
+            --sync-bg: #e1bee7;
+        }
+
+        [data-theme="green"] {
+            --bg-color: #e8f5e9;
+            --container-bg: #ffffff;
+            --primary-color: #2e7d32;
+            --primary-hover: #1b5e20;
+            --card-bg: #e8f5e9;
+            --vn-word-color: #ef6c00;
+            --sync-bg: #c8e6c9;
+        }
+
+        [data-theme="orange"] {
+            --bg-color: #fff3e0;
+            --container-bg: #ffffff;
+            --primary-color: #ef6c00;
+            --primary-hover: #e65100;
+            --card-bg: #fff3e0;
+            --vn-word-color: #d32f2f;
+            --sync-bg: #ffe0b2;
+        }
+
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; transition: background 0.3s, color 0.3s; }
+        body { background-color: var(--bg-color); color: var(--text-color); padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; margin: 0; }
+        
+        /* MÀN HÌNH CHÀO */
+        #welcome-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #6e8efb 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .welcome-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 90%;
+            animation: fadeIn 1s ease-in-out;
+        }
+        .game-icons { font-size: 45px; margin-bottom: 15px; display: flex; justify-content: center; gap: 15px; }
+        .game-icons span { animation: bounce 2s infinite ease-in-out; }
+        .game-icons span:nth-child(2) { animation-delay: 0.3s; }
+        .game-icons span:nth-child(3) { animation-delay: 0.6s; }
+        .welcome-card h1 { color: #ffffff; font-size: 2.2rem; margin-bottom: 10px; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        .welcome-card p { color: #d0e1fd; font-size: 1.05rem; margin-bottom: 30px; line-height: 1.5; }
+        .start-game-btn {
+            background: linear-gradient(45deg, #00b09b, #96c93d);
+            color: white; border: none; padding: 14px 35px;
+            font-size: 1.2rem; font-weight: bold; border-radius: 50px;
+            cursor: pointer; box-shadow: 0 5px 15px rgba(0, 176, 155, 0.4);
+            transition: all 0.3s ease;
+        }
+        .start-game-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0, 176, 155, 0.6); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+        /* GIAO DIỆN GAME CHÍNH */
+        .theme-selector { display: flex; gap: 10px; margin-bottom: 20px; background: var(--container-bg); padding: 10px; border-radius: 50px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .theme-btn { width: 30px; height: 30px; border-radius: 50%; border: 2px solid #fff; cursor: pointer; box-shadow: inset 0 0 3px rgba(0,0,0,0.2); }
+        .theme-btn.active { transform: scale(1.2); border-color: var(--text-color); }
+
+        .container { background: var(--container-bg); padding: 25px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 650px; }
+        h2 { text-align: center; color: var(--text-color); margin-top: 0; font-size: 1.2rem; border-bottom: 2px solid var(--border-color); padding-bottom: 5px; }
+
+        .filter-section { display: flex; gap: 10px; margin-bottom: 15px; }
+        .category-select, select.form-select, input[type="date"] { width: 100%; padding: 10px; border: 2px solid var(--primary-color); border-radius: 8px; font-weight: bold; background: var(--card-bg); color: var(--text-color); outline: none; cursor: pointer; font-size: 14px; }
+
+        .mode-select { display: flex; gap: 8px; margin-bottom: 20px; }
+        button { padding: 10px; border: none; background: var(--primary-color); color: white; border-radius: 8px; cursor: pointer; flex: 1; font-weight: bold; font-size: 13px; }
+        button:hover { background: var(--primary-hover); }
+        button.active { background: var(--success-color); box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
+
+        .card { background: var(--card-bg); padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 15px; border: 1px solid var(--border-color); position: relative; }
+        .vietnamese-word { font-size: 24px; font-weight: bold; color: var(--vn-word-color); margin-bottom: 15px; }
+
+        input[type="text"] { width: 100%; padding: 12px; margin-bottom: 10px; border: 2px solid var(--border-color); border-radius: 8px; font-size: 15px; background: var(--list-item-bg); color: var(--text-color); }
+        input[type="text"]:focus { outline: none; border-color: var(--primary-color); }
+
+        .options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .options button { background: var(--container-bg); color: var(--primary-color); border: 2px solid var(--primary-color); }
+        .options button:hover { background: var(--primary-color); color: white; }
+
+        .result { font-weight: bold; margin-top: 10px; text-align: center; min-height: 20px; font-size: 1.1rem; }
+        .success { color: var(--success-color); }
+        .error { color: var(--error-color); }
+
+        #game-canvas-container { display: none; position: relative; width: 100%; height: 380px; background: #0d1117; border-radius: 10px; overflow: hidden; border: 2px solid var(--primary-color); }
+        .falling-word { position: absolute; color: #58a6ff; font-weight: bold; font-size: 17px; background: rgba(255,255,255,0.12); padding: 4px 8px; border-radius: 6px; border: 1px solid #30363d; white-space: nowrap; }
+        .falling-word span { color: #ffa657; font-size: 12px; display: block; text-align: center; }
+        .score-board { position: absolute; top: 10px; left: 10px; color: #3fb950; font-weight: bold; font-size: 16px; z-index: 10; }
+        .game-over-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); color: #ff7b72; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 20; }
+        .game-over-screen button { margin-top: 15px; padding: 10px 20px; background: #238636; max-width: 150px; }
+        .rocket-launcher { position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%); font-size: 28px; }
+
+        .word-list { margin-top: 15px; max-height: 200px; overflow-y: auto; }
+        .word-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; border-bottom: 1px solid var(--list-item-border); background: var(--list-item-bg); border-radius: 8px; margin-bottom: 5px; }
+        .word-item strong { color: var(--primary-color); }
+        .category-tag { font-size: 11px; background: var(--border-color); padding: 2px 6px; border-radius: 4px; margin-left: 5px; opacity: 0.8; }
+        .delete-btn { background: var(--error-color); padding: 4px 8px; flex: none; font-size: 12px; }
+
+        .add-form { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; }
+        .add-form select, .add-form button { grid-column: span 1; }
+        
+        .playlist-section { background: var(--card-bg); padding: 15px; border-radius: 12px; margin-top: 20px; border: 1px solid var(--border-color); }
+        .playlist-controls { display: flex; gap: 8px; margin-top: 10px; }
+
+        .sync-tools { display: flex; gap: 10px; margin-top: 20px; background: var(--sync-bg); padding: 12px; border-radius: 10px; border: 1px solid var(--border-color); }
+        .sync-tools button { font-size: 12px; padding: 8px; }
+        .btn-export { background: #17a2b8; }
+        .btn-import { background: #ffc107; color: #212529; }
+    </style>
+</head>
+<body>
+
+    <!-- MÀN HÌNH CHÀO -->
+    <div id="welcome-screen">
+        <div class="welcome-card">
+            <div class="game-icons">
+                <span>🔢</span>
+                <span>🔷</span>
+                <span>🚀</span>
+            </div>
+            <h1>Game Từ Vựng Tiếng Anh</h1>
+            <p>Hơn 100 từ vựng số đếm, hình khối và các chủ đề có sẵn. Học thông minh theo ngày nhập và chủ đề!</p>
+            <button class="start-game-btn" onclick="enterGame()">🎮 Bắt Đầu Chơi</button>
+        </div>
+    </div>
+
+    <!-- GIAO DIỆN GAME CHÍNH -->
+    <div class="theme-selector" id="theme-selector">
+        <div class="theme-btn active" style="background: #007bff;" onclick="setTheme('default')" title="Blue"></div>
+        <div class="theme-btn" style="background: #3a3a3a;" onclick="setTheme('dark')" title="Dark"></div>
+        <div class="theme-btn" style="background: #8e24aa;" onclick="setTheme('purple')" title="Purple"></div>
+        <div class="theme-btn" style="background: #2e7d32;" onclick="setTheme('green')" title="Green"></div>
+        <div class="theme-btn" style="background: #ef6c00;" onclick="setTheme('orange')" title="Orange"></div>
+    </div>
+
+    <div class="container">
+        <h2 style="border:none; font-size:1.5rem; margin-bottom:15px;">🌟 Luyện Từ Vựng Tiếng Anh</h2>
+
+        <div class="filter-section">
+            <select id="category-filter" class="category-select" onchange="onFilterChange()">
+                <option value="all">🌟 Tất cả chủ đề</option>
+                <option value="numbers">🔢 Số đếm & Toán học</option>
+                <option value="shapes">🔷 Hình khối & Không gian</option>
+                <option value="emotions">🧠 Cảm xúc & tâm lý</option>
+                <option value="personality">🧩 Tính cách & phẩm chất</option>
+                <option value="relationships">👥 Quan hệ xã hội & đời sống</option>
+                <option value="economics">📉 Kinh tế, tài chính & học thuật</option>
+                <option value="occupations">👨‍⚕️ Nghề nghiệp & vai trò xã hội</option>
+                <option value="law">⚖️ Pháp luật, tội phạm & bạo lực</option>
+                <option value="clothing">👕 Trang phục & vật dụng cá nhân</option>
+                <option value="animals_nature">🦁 Động vật & thiên nhiên</option>
+                <option value="objects_arch">🏗️ Đồ vật, nhà cửa & kiến trúc</option>
+                <option value="actions">🛠️ Hành động & chuyển động vật lý</option>
+                <option value="abstract">📚 Khái niệm trừu tượng chung</option>
+            </select>
+            <select id="date-filter" class="category-select" onchange="onFilterChange()">
+                <option value="all">📅 Tất cả các ngày</option>
+            </select>
+        </div>
+
+        <div class="mode-select">
+            <button id="btn-type-mode" class="active" onclick="switchMode('type')">⌨️ Tự Gõ</button>
+            <button id="btn-choice-mode" onclick="switchMode('choice')">📝 Trắc Nghiệm</button>
+            <button id="btn-rocket-mode" onclick="switchMode('rocket')">🚀 Bắn Tên Lửa</button>
+        </div>
+
+        <div class="card" id="game-card">
+            <div class="vietnamese-word" id="target-vn">Đang tải...</div>
+            
+            <div id="type-container">
+                <input type="text" id="user-input" placeholder="Type in English..." onkeypress="handleKeyPress(event)" autocomplete="off">
+                <button onclick="checkTypeAnswer()">Kiểm tra</button>
+            </div>
+
+            <div id="choice-container" class="options" style="display: none;"></div>
+
+            <div class="result" id="result-message"></div>
+        </div>
+
+        <div id="game-canvas-container">
+            <div class="score-board">Điểm: <span id="rocket-score">0</span></div>
+            <div id="words-area"></div>
+            <div class="rocket-launcher">🚀</div>
+            
+            <div id="game-over-screen" class="game-over-screen" style="display: none;">
+                <h2>GAME OVER!</h2>
+                <p>Điểm của bạn: <span id="final-score">0</span></p>
+                <button onclick="startRocketGame()">Chơi lại 🔄</button>
+            </div>
+        </div>
+        
+        <div id="rocket-input-container" style="display: none; margin-top: 10px;">
+            <input type="text" id="rocket-input" placeholder="Gõ từ tiếng Anh đang rơi..." oninput="checkRocketInput()" autocomplete="off">
+        </div>
+
+        <div class="playlist-section">
+            <h2>🎧 Nghe Từ Vựng Tự Động</h2>
+            <div id="playlist-status" style="text-align: center; font-size: 14px; font-weight: bold; margin-bottom: 10px; color: var(--primary-color);">Trạng thái: Đang dừng</div>
+            <div class="playlist-controls">
+                <button id="btn-start-playlist" onclick="startPlaylist()" style="background: var(--success-color);">▶️ Bắt đầu Nghe theo bộ lọc</button>
+                <button id="btn-stop-playlist" onclick="stopPlaylist()" style="background: var(--error-color);">⏹️ Dừng lại</button>
+            </div>
+        </div>
+
+        <h2>➕ Thêm Từ Mới</h2>
+        <div class="add-form">
+            <input type="text" id="new-en" placeholder="English (e.g. Zero)">
+            <input type="text" id="new-vn" placeholder="Nghĩa Việt (e.g. Số không)">
+            <select id="new-cat" class="form-select">
+                <option value="numbers">🔢 Số đếm & Toán học</option>
+                <option value="shapes">🔷 Hình khối & Không gian</option>
+                <option value="emotions">🧠 Cảm xúc & tâm lý</option>
+                <option value="personality">🧩 Tính cách & phẩm chất</option>
+                <option value="relationships">👥 Quan hệ xã hội & đời sống</option>
+                <option value="economics">📉 Kinh tế, tài chính & học thuật</option>
+                <option value="occupations">👨‍⚕️ Nghề nghiệp & vai trò xã hội</option>
+                <option value="law">⚖️ Pháp luật, tội phạm & bạo lực</option>
+                <option value="clothing">👕 Trang phục & vật dụng cá nhân</option>
+                <option value="animals_nature">🦁 Động vật & thiên nhiên</option>
+                <option value="objects_arch">🏗️ Đồ vật, nhà cửa & kiến trúc</option>
+                <option value="actions">🛠️ Hành động & chuyển động vật lý</option>
+                <option value="abstract" selected>📚 Khái niệm trừu tượng chung</option>
+            </select>
+            <button onclick="addWord()">Thêm Từ</button>
+        </div>
+
+        <h2>📖 Danh Sách Từ (<span id="word-count">0</span>)</h2>
+        <div class="word-list" id="word-list"></div>
+
+        <div class="sync-tools">
+            <button class="btn-export" onclick="exportData()">📥 Xuất từ (Backup)</button>
+            <button class="btn-import" onclick="document.getElementById('import-file').click()">📤 Nhập từ (Restore)</button>
+            <input type="file" id="import-file" style="display: none;" accept=".json" onchange="importData(event)">
+        </div>
+    </div>
+
+    <script>
+        function enterGame() {
+            document.getElementById('welcome-screen').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('welcome-screen').style.display = 'none';
+            }, 500);
+        }
+
+        // Hơn 100 từ vựng có sẵn bao gồm Số đếm, Hình khối và các nhóm chủ đề
+        let defaultWords = [
+            // Số đếm & Toán học (Numbers)
+            { en: "Zero", vn: "Số không", cat: "numbers", date: "2026-08-18" },
+            { en: "One", vn: "Số một", cat: "numbers", date: "2026-08-18" },
+            { en: "Two", vn: "Số hai", cat: "numbers", date: "2026-08-18" },
+            { en: "Three", vn: "Số ba", cat: "numbers", date: "2026-08-18" },
+            { en: "Four", vn: "Số bốn", cat: "numbers", date: "2026-08-18" },
+            { en: "Five", vn: "Số năm", cat: "numbers", date: "2026-08-18" },
+            { en: "Six", vn: "Số sáu", cat: "numbers", date: "2026-08-18" },
+            { en: "Seven", vn: "Số bảy", cat: "numbers", date: "2026-08-18" },
+            { en: "Eight", vn: "Số tám", cat: "numbers", date: "2026-08-18" },
+            { en: "Nine", vn: "Số chín", cat: "numbers", date: "2026-08-18" },
+            { en: "Ten", vn: "Số mười", cat: "numbers", date: "2026-08-18" },
+            { en: "Eleven", vn: "Số mười một", cat: "numbers", date: "2026-08-18" },
+            { en: "Twelve", vn: "Số mười hai", cat: "numbers", date: "2026-08-18" },
+            { en: "Thirteen", vn: "Số mười ba", cat: "numbers", date: "2026-08-18" },
+            { en: "Fourteen", vn: "Số mười bốn", cat: "numbers", date: "2026-08-18" },
+            { en: "Fifteen", vn: "Số mười lăm", cat: "numbers", date: "2026-08-18" },
+            { en: "Sixteen", vn: "Số mười sáu", cat: "numbers", date: "2026-08-18" },
+            { en: "Seventeen", vn: "Số mười bảy", cat: "numbers", date: "2026-08-18" },
+            { en: "Eighteen", vn: "Số mười tám", cat: "numbers", date: "2026-08-18" },
+            { en: "Nineteen", vn: "Số mười chín", cat: "numbers", date: "2026-08-18" },
+            { en: "Twenty", vn: "Số hai mươi", cat: "numbers", date: "2026-08-18" },
+            { en: "Thirty", vn: "Số ba mươi", cat: "numbers", date: "2026-08-18" },
+            { en: "Forty", vn: "Số bốn mươi", cat: "numbers", date: "2026-08-18" },
+            { en: "Fifty", vn: "Số năm mươi", cat: "numbers", date: "2026-08-18" },
+            { en: "Sixty", vn: "Số sáu mươi", cat: "numbers", date: "2026-08-18" },
+            { en: "Seventy", vn: "Số bảy mươi", cat: "numbers", date: "2026-08-18" },
+            { en: "Eighty", vn: "Số tám mươi", cat: "numbers", date: "2026-08-18" },
+            { en: "Ninety", vn: "Số chín mươi", cat: "numbers", date: "2026-08-18" },
+            { en: "Hundred", vn: "Một trăm", cat: "numbers", date: "2026-08-18" },
+            { en: "Thousand", vn: "Một nghìn", cat: "numbers", date: "2026-08-18" },
+            { en: "Million", vn: "Một triệu", cat: "numbers", date: "2026-08-18" },
+            { en: "Billion", vn: "Một tỷ", cat: "numbers", date: "2026-08-18" },
+            { en: "First", vn: "Thứ nhất", cat: "numbers", date: "2026-08-18" },
+            { en: "Second", vn: "Thứ hai", cat: "numbers", date: "2026-08-18" },
+            { en: "Third", vn: "Thứ ba", cat: "numbers", date: "2026-08-18" },
+            { en: "Quarter", vn: "Một phần tư", cat: "numbers", date: "2026-08-18" },
+            { en: "Half", vn: "Một nửa", cat: "numbers", date: "2026-08-18" },
+            { en: "Double", vn: "Gấp đôi", cat: "numbers", date: "2026-08-18" },
+            { en: "Triple", vn: "Gấp ba", cat: "numbers", date: "2026-08-18" },
+            { en: "Average", vn: "Số trung bình", cat: "numbers", date: "2026-08-18" },
+
+            // Hình khối & Không gian (Shapes)
+            { en: "Circle", vn: "Hình tròn", cat: "shapes", date: "2026-08-18" },
+            { en: "Square", vn: "Hình vuông", cat: "shapes", date: "2026-08-18" },
+            { en: "Triangle", vn: "Hình tam giác", cat: "shapes", date: "2026-08-18" },
+            { en: "Rectangle", vn: "Hình chữ nhật", cat: "shapes", date: "2026-08-18" },
+            { en: "Oval", vn: "Hình bầu dục", cat: "shapes", date: "2026-08-18" },
+            { en: "Star", vn: "Hình ngôi sao", cat: "shapes", date: "2026-08-18" },
+            { en: "Heart", vn: "Hình trái tim", cat: "shapes", date: "2026-08-18" },
+            { en: "Diamond", vn: "Hình kim cương / thoi", cat: "shapes", date: "2026-08-18" },
+            { en: "Pentagon", vn: "Hình ngũ giác", cat: "shapes", date: "2026-08-18" },
+            { en: "Hexagon", vn: "Hình lục giác", cat: "shapes", date: "2026-08-18" },
+            { en: "Cube", vn: "Hình lập phương", cat: "shapes", date: "2026-08-18" },
+            { en: "Sphere", vn: "Hình cầu", cat: "shapes", date: "2026-08-18" },
+            { en: "Cylinder", vn: "Hình trụ", cat: "shapes", date: "2026-08-18" },
+            { en: "Cone", vn: "Hình nón", cat: "shapes", date: "2026-08-18" },
+            { en: "Pyramid", vn: "Hình chóp / kim tự tháp", cat: "shapes", date: "2026-08-18" },
+            { en: "Line", vn: "Đường thẳng", cat: "shapes", date: "2026-08-18" },
+            { en: "Angle", vn: "Góc", cat: "shapes", date: "2026-08-18" },
+            { en: "Curve", vn: "Đường cong", cat: "shapes", date: "2026-08-18" },
+            { en: "Point", vn: "Điểm", cat: "shapes", date: "2026-08-18" },
+            { en: "Parallel", vn: "Song song", cat: "shapes", date: "2026-08-18" },
+
+            // Cảm xúc & tâm lý (Emotions)
+            { en: "Anxiety", vn: "Sự lo âu", cat: "emotions", date: "2026-08-18" },
+            { en: "Happiness", vn: "Niềm hạnh phúc", cat: "emotions", date: "2026-08-18" },
+            { en: "Sadness", vn: "Nỗi buồn", cat: "emotions", date: "2026-08-18" },
+            { en: "Anger", vn: "Sự tức giận", cat: "emotions", date: "2026-08-18" },
+            { en: "Fear", vn: "Nỗi sợ hãi", cat: "emotions", date: "2026-08-18" },
+            { en: "Excitement", vn: "Sự phấn khích", cat: "emotions", date: "2026-08-18" },
+            { en: "Stress", vn: "Sự căng thẳng", cat: "emotions", date: "2026-08-18" },
+            { en: "Depression", vn: "Trạng thái trầm cảm", cat: "emotions", date: "2026-08-18" },
+            { en: "Guilt", vn: "Sự tội lỗi", cat: "emotions", date: "2026-08-18" },
+            { en: "Jealousy", vn: "Sự ghen tị", cat: "emotions", date: "2026-08-18" },
+
+            // Tính cách & phẩm chất (Personality)
+            { en: "Confidence", vn: "Sự tự tin", cat: "personality", date: "2026-08-18" },
+            { en: "Honesty", vn: "Tính trung thực", cat: "personality", date: "2026-08-18" },
+            { en: "Kindness", vn: "Lòng tốt", cat: "personality", date: "2026-08-18" },
+            { en: "Patience", vn: "Sự kiên nhẫn", cat: "personality", date: "2026-08-18" },
+            { en: "Ambition", vn: "Hoài bão, tham vọng", cat: "personality", date: "2026-08-18" },
+            { en: "Generosity", vn: "Tính hào phóng", cat: "personality", date: "2026-08-18" },
+            { en: "Courage", vn: "Sự can đảm", cat: "personality", date: "2026-08-18" },
+            { en: "Humility", vn: "Tính khiêm tốn", cat: "personality", date: "2026-08-18" },
+            { en: "Sincerity", vn: "Sự chân thành", cat: "personality", date: "2026-08-18" },
+            { en: "Creativity", vn: "Tính sáng tạo", cat: "personality", date: "2026-08-18" },
+
+            // Kinh tế, tài chính & học thuật (Economics)
+            { en: "Inflation", vn: "Lạm phát", cat: "economics", date: "2026-08-18" },
+            { en: "Recession", vn: "Suy thoái kinh tế", cat: "economics", date: "2026-08-18" },
+            { en: "Investment", vn: "Sự đầu tư", cat: "economics", date: "2026-08-18" },
+            { en: "Budget", vn: "Ngân sách", cat: "economics", date: "2026-08-18" },
+            { en: "Revenue", vn: "Doanh thu", cat: "economics", date: "2026-08-18" },
+            { en: "Profit", vn: "Lợi nhuận", cat: "economics", date: "2026-08-18" },
+            { en: "Debt", vn: "Khoản nợ", cat: "economics", date: "2026-08-18" },
+            { en: "Taxation", vn: "Hệ thống thuế", cat: "economics", date: "2026-08-18" },
+            { en: "Scholarship", vn: "Học bổng", cat: "economics", date: "2026-08-18" },
+            { en: "Thesis", vn: "Luận văn, luận án", cat: "economics", date: "2026-08-18" }
+        ];
+
+        let words = JSON.parse(localStorage.getItem('my_vocab_game_v100')) || defaultWords;
+        let wrongWords = [];
+        let selectedCategory = 'all';
+        let selectedDate = 'all';
+        let currentMode = 'type';
+        let currentWordIndex = -1;
+
+        function updateDateFilterOptions() {
+            const dateSelect = document.getElementById('date-filter');
+            const currentSelected = dateSelect.value;
+            const dates = [...new Set(words.map(w => w.date || 'N/A'))].sort().reverse();
+            
+            let optionsHtml = '<option value="all">📅 Tất cả các ngày</option>';
+            dates.forEach(d => {
+                optionsHtml += `<option value="${d}">${d}</option>`;
+            });
+            
+            dateSelect.innerHTML = optionsHtml;
+            if (dates.includes(currentSelected)) {
+                dateSelect.value = currentSelected;
+            } else {
+                dateSelect.value = 'all';
+            }
+        }
+
+        function getFilteredWords() {
+            return words.filter(w => {
+                const matchCat = (selectedCategory === 'all') || ((w.cat || 'abstract') === selectedCategory);
+                const matchDate = (selectedDate === 'all') || ((w.date || 'N/A') === selectedDate);
+                return matchCat && matchDate;
+            });
+        }
+
+        function onFilterChange() {
+            selectedCategory = document.getElementById('category-filter').value;
+            selectedDate = document.getElementById('date-filter').value;
+            renderWordList();
+            if (currentMode === 'rocket') {
+                startRocketGame();
+            } else {
+                nextQuestion();
+            }
+        }
+
+        function setTheme(theme) {
+            if (theme === 'default') document.documentElement.removeAttribute('data-theme');
+            else document.documentElement.setAttribute('data-theme', theme);
+            
+            const buttons = document.querySelectorAll('.theme-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            const indexMap = {'default': 0, 'dark': 1, 'purple': 2, 'green': 3, 'orange': 4};
+            if(buttons[indexMap[theme]]) buttons[indexMap[theme]].classList.add('active');
+            localStorage.setItem('my_vocab_theme', theme);
+        }
+        setTheme(localStorage.getItem('my_vocab_theme') || 'default');
+
+        function speakWord(text, lang = 'en-US', callback = null) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = lang;
+                utterance.rate = 0.9;
+                if (callback) {
+                    utterance.onend = callback;
+                }
+                window.speechSynthesis.speak(utterance);
+            } else {
+                if (callback) callback();
+            }
+        }
+
+        function saveWords() {
+            localStorage.setItem('my_vocab_game_v100', JSON.stringify(words));
+            updateDateFilterOptions();
+            renderWordList();
+        }
+
+        function renderWordList() {
+            const listContainer = document.getElementById('word-list');
+            const activeList = getFilteredWords();
+            document.getElementById('word-count').innerText = activeList.length;
+            listContainer.innerHTML = '';
+            
+            activeList.forEach((item) => {
+                const originalIndex = words.indexOf(item);
+                listContainer.innerHTML += `
+                    <div class="word-item">
+                        <span>
+                            <strong>${item.en}</strong>: ${item.vn}
+                            <span class="category-tag">${item.cat || 'abstract'}</span>
+                            <span class="category-tag" style="background:var(--primary-color); color:#fff;">📅 ${item.date || 'N/A'}</span>
+                        </span>
+                        <button class="delete-btn" onclick="removeWord(${originalIndex})">Xóa</button>
+                    </div>
+                `;
+            });
+        }
+
+        function addWord() {
+            const en = document.getElementById('new-en').value.trim();
+            const vn = document.getElementById('new-vn').value.trim();
+            const cat = document.getElementById('new-cat').value;
+            const todayStr = new Date().toISOString().split('T')[0];
+
+            if (en && vn) {
+                if (words.some(w => w.en.toLowerCase() === en.toLowerCase())) {
+                    alert('Từ này đã có trong danh sách!'); return;
+                }
+                words.push({ en: en, vn: vn, cat: cat, date: todayStr });
+                saveWords();
+                document.getElementById('new-en').value = '';
+                document.getElementById('new-vn').value = '';
+                if (currentMode !== 'rocket') nextQuestion();
+            }
+        }
+
+        function removeWord(index) {
+            words.splice(index, 1);
+            saveWords();
+            if (currentMode !== 'rocket') nextQuestion();
+        }
+
+        function switchMode(mode) {
+            currentMode = mode;
+            document.getElementById('btn-type-mode').classList.toggle('active', mode === 'type');
+            document.getElementById('btn-choice-mode').classList.toggle('active', mode === 'choice');
+            document.getElementById('btn-rocket-mode').classList.toggle('active', mode === 'rocket');
+            
+            const card = document.getElementById('game-card');
+            const rocketCanvas = document.getElementById('game-canvas-container');
+            const rocketInput = document.getElementById('rocket-input-container');
+
+            if (mode === 'rocket') {
+                card.style.display = 'none';
+                rocketCanvas.style.display = 'block';
+                rocketInput.style.display = 'block';
+                startRocketGame();
+            } else {
+                stopRocketGame();
+                card.style.display = 'block';
+                rocketCanvas.style.display = 'none';
+                rocketInput.style.display = 'none';
+                document.getElementById('type-container').style.display = mode === 'type' ? 'block' : 'none';
+                document.getElementById('choice-container').style.display = mode === 'choice' ? 'grid' : 'none';
+                nextQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            document.getElementById('result-message').innerText = '';
+            document.getElementById('user-input').value = '';
+            const currentPool = getFilteredWords();
+
+            if (currentPool.length === 0) {
+                document.getElementById('target-vn').innerText = "🎉 Không có từ vựng nào theo bộ lọc này!";
+                return;
+            }
+
+            let currentWord;
+            if (wrongWords.length > 0 && Math.random() < 0.7) {
+                const wrongIndex = Math.floor(Math.random() * wrongWords.length);
+                currentWord = wrongWords[wrongIndex];
+                currentWordIndex = currentPool.indexOf(currentWord);
+            } else {
+                let newIndex;
+                if (currentPool.length === 1) newIndex = 0;
+                else {
+                    do {
+                        newIndex = Math.floor(Math.random() * currentPool.length);
+                    } while (newIndex === currentWordIndex && currentPool.length > 1);
+                }
+                currentWordIndex = newIndex;
+                currentWord = currentPool[currentWordIndex];
+            }
+
+            document.getElementById('target-vn').innerText = currentWord.vn;
+            if (currentMode === 'choice') setupChoiceOptions(currentWord, currentPool);
+            
+            window.activeCurrentWord = currentWord;
+        }
+
+        function checkTypeAnswer() {
+            const currentPool = getFilteredWords();
+            if (currentWordIndex === -1 || currentPool.length === 0) return;
+            const input = document.getElementById('user-input').value.trim();
+            const correctWordObj = window.activeCurrentWord || currentPool[currentWordIndex];
+            const correct = correctWordObj.en;
+            const resultDiv = document.getElementById('result-message');
+
+            if (input.toLowerCase() === correct.toLowerCase()) {
+                resultDiv.className = "result success";
+                resultDiv.innerText = `Chính xác! 🔊 (${correct})`;
+                speakWord(correct);
+                
+                wrongWords = wrongWords.filter(w => w.en !== correct);
+                setTimeout(nextQuestion, 1200);
+            } else {
+                resultDiv.className = "result error";
+                resultDiv.innerText = `Sai rồi! Đáp án là: ${correct}`;
+                speakWord(correct);
+                
+                if (!wrongWords.some(w => w.en === correct)) {
+                    wrongWords.push(correctWordObj);
+                }
+            }
+        }
+
+        function handleKeyPress(e) { if (e.key === 'Enter') checkTypeAnswer(); }
+
+        function setupChoiceOptions(correctWord, currentPool) {
+            const container = document.getElementById('choice-container');
+            container.innerHTML = '';
+            let options = [correctWord.en];
+            
+            let poolSource = currentPool.length >= 4 ? currentPool : words;
+            let otherWords = poolSource.filter(w => w.en !== correctWord.en).sort(() => 0.5 - Math.random());
+            
+            for (let i = 0; i < Math.min(3, otherWords.length); i++) options.push(otherWords[i].en);
+            options.sort(() => 0.5 - Math.random());
+
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.innerText = opt;
+                btn.onclick = () => {
+                    const correctWordObj = window.activeCurrentWord;
+                    if (opt === correctWordObj.en) {
+                        document.getElementById('result-message').className = "result success";
+                        document.getElementById('result-message').innerText = "Chính xác! 🔊";
+                        speakWord(correctWordObj.en);
+                        
+                        wrongWords = wrongWords.filter(w => w.en !== correctWordObj.en);
+                        setTimeout(nextQuestion, 1200);
+                    } else {
+                        document.getElementById('result-message').className = "result error";
+                        document.getElementById('result-message').innerText = `Sai rồi! Là: ${correctWordObj.en}`;
+                        speakWord(correctWordObj.en);
+                        
+                        if (!wrongWords.some(w => w.en === correctWordObj.en)) {
+                            wrongWords.push(correctWordObj);
+                        }
+                        setTimeout(nextQuestion, 1200);
+                    }
+                };
+                container.appendChild(btn);
+            });
+        }
+
+        let rocketScore = 0;
+        let activeFallingWords = [];
+        let gameInterval = null;
+        let spawnInterval = null;
+        let isGameOver = false;
+
+        function startRocketGame() {
+            stopRocketGame();
+            const currentPool = getFilteredWords();
+            if (currentPool.length === 0) {
+                alert('Không có từ vựng nào theo bộ lọc này!');
+                return;
+            }
+            rocketScore = 0;
+            isGameOver = false;
+            activeFallingWords = [];
+            document.getElementById('rocket-score').innerText = '0';
+            document.getElementById('words-area').innerHTML = '';
+            document.getElementById('game-over-screen').style.display = 'none';
+            document.getElementById('rocket-input').value = '';
+            document.getElementById('rocket-input').focus();
+
+            gameInterval = setInterval(updateRocketGame, 50);
+            spawnInterval = setInterval(spawnFallingWord, 4500);
+            spawnFallingWord();
+        }
+
+        function stopRocketGame() {
+            clearInterval(gameInterval);
+            clearInterval(spawnInterval);
+        }
+
+        function spawnFallingWord() {
+            if (isGameOver) return;
+            const currentPool = getFilteredWords();
+            if (currentPool.length === 0) return;
+
+            let randomWord;
+            if (wrongWords.length > 0 && Math.random() < 0.6) {
+                randomWord = wrongWords[Math.floor(Math.random() * wrongWords.length)];
+            } else {
+                randomWord = currentPool[Math.floor(Math.random() * currentPool.length)];
+            }
+
+            const wordEl = document.createElement('div');
+            wordEl.className = 'falling-word';
+            wordEl.innerHTML = `${randomWord.en} <span>(${randomWord.vn})</span>`;
+            
+            const containerWidth = document.getElementById('game-canvas-container').clientWidth - 140;
+            const randomX = Math.max(10, Math.floor(Math.random() * containerWidth));
+            
+            wordEl.style.left = randomX + 'px';
+            wordEl.style.top = '0px';
+            
+            document.getElementById('words-area').appendChild(wordEl);
+
+            let speed = 0.35 + (rocketScore * 0.02); 
+            
+            activeFallingWords.push({
+                element: wordEl,
+                wordData: randomWord,
+                y: 0,
+                speed: speed
+            });
+        }
+
+        function updateRocketGame() {
+            if (isGameOver) return;
+            const canvasHeight = document.getElementById('game-canvas-container').clientHeight - 40;
+
+            for (let i = 0; i < activeFallingWords.length; i++) {
+                let item = activeFallingWords[i];
+                item.y += item.speed;
+                item.element.style.top = item.y + 'px';
+
+                if (item.y >= canvasHeight) {
+                    endRocketGame();
+                    break;
+                }
+            }
+        }
+
+        function checkRocketInput() {
+            if (isGameOver) return;
+            const inputEl = document.getElementById('rocket-input');
+            const typedText = inputEl.value.trim().toLowerCase();
+
+            for (let i = 0; i < activeFallingWords.length; i++) {
+                let item = activeFallingWords[i];
+                if (item.wordData.en.toLowerCase() === typedText) {
+                    speakWord(item.wordData.en);
+                    item.element.remove();
+                    activeFallingWords.splice(i, 1);
+                    
+                    wrongWords = wrongWords.filter(w => w.en !== item.wordData.en);
+                    rocketScore += 1;
+                    document.getElementById('rocket-score').innerText = rocketScore;
+                    inputEl.value = '';
+                    break;
+                }
+            }
+        }
+
+        function endRocketGame() {
+            isGameOver = true;
+            stopRocketGame();
+            document.getElementById('final-score').innerText = rocketScore;
+            document.getElementById('game-over-screen').style.display = 'flex';
+        }
+
+        let playlistTimer = null;
+        let isPlayingList = false;
+
+        function startPlaylist() {
+            if (isPlayingList) return;
+            
+            const listToPlay = getFilteredWords();
+            if (listToPlay.length === 0) {
+                alert('Không tìm thấy từ vựng nào theo bộ lọc này để phát!');
+                return;
+            }
+
+            isPlayingList = true;
+            let index = 0;
+            document.getElementById('playlist-status').innerText = `Đang phát: Từ 1 / ${listToPlay.length}`;
+
+            function playNext() {
+                if (!isPlayingList || index >= listToPlay.length) {
+                    stopPlaylist();
+                    document.getElementById('playlist-status').innerText = 'Trạng thái: Đã hoàn thành danh sách!';
+                    return;
+                }
+
+                const item = listToPlay[index];
+                document.getElementById('playlist-status').innerText = `Đang phát (${index + 1}/${listToPlay.length}): ${item.en} - ${item.vn}`;
+
+                speakWord(item.en, 'en-US', () => {
+                    if (!isPlayingList) return;
+                    playlistTimer = setTimeout(() => {
+                        speakWord(item.vn, 'vi-VN', () => {
+                            if (!isPlayingList) return;
+                            playlistTimer = setTimeout(() => {
+                                index++;
+                                playNext();
+                            }, 1200);
+                        });
+                    }, 800);
+                });
+            }
+
+            playNext();
+        }
+
+        function stopPlaylist() {
+            isPlayingList = false;
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+            clearTimeout(playlistTimer);
+            document.getElementById('playlist-status').innerText = 'Trạng thái: Đã dừng';
+        }
+
+        function exportData() {
+            if (words.length === 0) { alert('Trống!'); return; }
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(words));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `vocab_backup_${new Date().toLocaleDateString()}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        function importData(event) {
+            const fileReader = new FileReader();
+            fileReader.onload = function(e) {
+                try {
+                    const importedWords = JSON.parse(e.target.result);
+                    if (Array.isArray(importedWords) && importedWords.length > 0 && importedWords[0].en) {
+                        if(confirm(`Nạp ${importedWords.length} từ?`)) {
+                            words = importedWords;
+                            saveWords();
+                            if (currentMode !== 'rocket') nextQuestion();
+                            alert('Thành công!');
+                        }
+                    } else alert('File JSON không đúng định dạng!');
+                } catch (err) { alert('Lỗi đọc file!'); }
+                event.target.value = '';
+            };
+            if (event.target.files[0]) fileReader.readAsText(event.target.files[0]);
+        }
+
+        updateDateFilterOptions();
+        renderWordList();
+        nextQuestion();
+    </script>
+</body>
+</html>
