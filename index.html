@@ -178,7 +178,7 @@
                 <span>🚀</span>
             </div>
             <h1>Game Từ Vựng Tiếng Anh</h1>
-            <p>Hơn 100 từ vựng số đếm, hình khối và các chủ đề có sẵn. Học thông minh theo ngày nhập và chủ đề!</p>
+            <p>Hơn 100 từ vựng số đếm, hình khối và các chủ đề có sẵn. Đã bổ sung đầy đủ ít nhất 5 từ phổ biến cho mỗi chủ đề!</p>
             <button class="start-game-btn" onclick="enterGame()">🎮 Bắt Đầu Chơi</button>
         </div>
     </div>
@@ -301,16 +301,15 @@
             }, 500);
         }
 
-        // Hơn 100 từ vựng có sẵn bao gồm Số đếm, Hình khối và các nhóm chủ đề
+        // Danh sách từ vựng đã được bổ sung đầy đủ ít nhất 5 từ phổ biến cho mỗi chủ đề
         let defaultWords = [
-            // Số đếm & Toán học (Numbers)
+            // Số đếm & Toán học (numbers)
             { en: "Zero", vn: "Số không", cat: "numbers", date: "2026-08-18" },
             { en: "One", vn: "Số một", cat: "numbers", date: "2026-08-18" },
             { en: "Two", vn: "Số hai", cat: "numbers", date: "2026-08-18" },
             { en: "Three", vn: "Số ba", cat: "numbers", date: "2026-08-18" },
             { en: "Four", vn: "Số bốn", cat: "numbers", date: "2026-08-18" },
-            { en: "Five", vn: "Số năm", cat: "numbers", date: "2026-08-18" },
-            { en: "Six", vn: "Số sáu", cat: "numbers", date: "2026-08-18" },
+            { en: "Five", vn: "Số năm", cat: "numbers", date: "2026-08-18" }, { en: "Six", vn: "Số sáu", cat: "numbers", date: "2026-08-18" },
             { en: "Seven", vn: "Số bảy", cat: "numbers", date: "2026-08-18" },
             { en: "Eight", vn: "Số tám", cat: "numbers", date: "2026-08-18" },
             { en: "Nine", vn: "Số chín", cat: "numbers", date: "2026-08-18" },
@@ -391,20 +390,71 @@
             { en: "Sincerity", vn: "Sự chân thành", cat: "personality", date: "2026-08-18" },
             { en: "Creativity", vn: "Tính sáng tạo", cat: "personality", date: "2026-08-18" },
 
-            // Kinh tế, tài chính & học thuật (Economics)
+            // Quan hệ xã hội & đời sống (relationships)
+            { en: "Family", vn: "Gia đình", cat: "relationships", date: "2026-08-18" },
+            { en: "Friend", vn: "Bạn bè", cat: "relationships", date: "2026-08-18" },
+            { en: "Colleague", vn: "Đồng nghiệp", cat: "relationships", date: "2026-08-18" },
+            { en: "Neighbor", vn: "Hàng xóm", cat: "relationships", date: "2026-08-18" },
+            { en: "Community", vn: "Cộng đồng", cat: "relationships", date: "2026-08-18" },
+
+            // Kinh tế, tài chính & học thuật (economics)
             { en: "Inflation", vn: "Lạm phát", cat: "economics", date: "2026-08-18" },
             { en: "Recession", vn: "Suy thoái kinh tế", cat: "economics", date: "2026-08-18" },
             { en: "Investment", vn: "Sự đầu tư", cat: "economics", date: "2026-08-18" },
             { en: "Budget", vn: "Ngân sách", cat: "economics", date: "2026-08-18" },
-            { en: "Revenue", vn: "Doanh thu", cat: "economics", date: "2026-08-18" },
             { en: "Profit", vn: "Lợi nhuận", cat: "economics", date: "2026-08-18" },
-            { en: "Debt", vn: "Khoản nợ", cat: "economics", date: "2026-08-18" },
-            { en: "Taxation", vn: "Hệ thống thuế", cat: "economics", date: "2026-08-18" },
-            { en: "Scholarship", vn: "Học bổng", cat: "economics", date: "2026-08-18" },
-            { en: "Thesis", vn: "Luận văn, luận án", cat: "economics", date: "2026-08-18" }
+
+            // Nghề nghiệp & vai trò xã hội (occupations)
+            { en: "Doctor", vn: "Bác sĩ", cat: "occupations", date: "2026-08-18" },
+            { en: "Teacher", vn: "Giáo viên", cat: "occupations", date: "2026-08-18" },
+            { en: "Engineer", vn: "Kỹ sư", cat: "occupations", date: "2026-08-18" },
+            { en: "Lawyer", vn: "Luật sư", cat: "occupations", date: "2026-08-18" },
+            { en: "Nurse", vn: "Y tá", cat: "occupations", date: "2026-08-18" },
+
+            // Pháp luật, tội phạm & bạo lực (law)
+            { en: "Crime", vn: "Tội phạm", cat: "law", date: "2026-08-18" },
+            { en: "Judge", vn: "Thẩm phán", cat: "law", date: "2026-08-18" },
+            { en: "Police", vn: "Cảnh sát", cat: "law", date: "2026-08-18" },
+            { en: "Prison", vn: "Nhà tù", cat: "law", date: "2026-08-18" },
+            { en: "Trial", vn: "Phiên tòa xét xử", cat: "law", date: "2026-08-18" },
+
+            // Trang phục & vật dụng cá nhân (clothing)
+            { en: "Shirt", vn: "Áo sơ mi", cat: "clothing", date: "2026-08-18" },
+            { en: "Pants", vn: "Quần dài", cat: "clothing", date: "2026-08-18" },
+            { en: "Shoes", vn: "Giày", cat: "clothing", date: "2026-08-18" },
+            { en: "Jacket", vn: "Áo khoác", cat: "clothing", date: "2026-08-18" },
+            { en: "Hat", vn: "Mũ, nón", cat: "clothing", date: "2026-08-18" },
+
+            // Động vật & thiên nhiên (animals_nature)
+            { en: "Lion", vn: "Sư tử", cat: "animals_nature", date: "2026-08-18" },
+            { en: "Forest", vn: "Rừng", cat: "animals_nature", date: "2026-08-18" },
+            { en: "Mountain", vn: "Núi", cat: "animals_nature", date: "2026-08-18" },
+            { en: "River", vn: "Sông", cat: "animals_nature", date: "2026-08-18" },
+            { en: "Ocean", vn: "Đại dương", cat: "animals_nature", date: "2026-08-18" },
+
+            // Đồ vật, nhà cửa & kiến trúc (objects_arch)
+            { en: "House", vn: "Ngôi nhà", cat: "objects_arch", date: "2026-08-18" },
+            { en: "Table", vn: "Cái bàn", cat: "objects_arch", date: "2026-08-18" },
+            { en: "Chair", vn: "Cái ghế", cat: "objects_arch", date: "2026-08-18" },
+            { en: "Building", vn: "Tòa nhà", cat: "objects_arch", date: "2026-08-18" },
+            { en: "Door", vn: "Cửa ra vào", cat: "objects_arch", date: "2026-08-18" },
+
+            // Hành động & chuyển động vật lý (actions)
+            { en: "Run", vn: "Chạy", cat: "actions", date: "2026-08-18" },
+            { en: "Walk", vn: "Đi bộ", cat: "actions", date: "2026-08-18" },
+            { en: "Jump", vn: "Nhảy", cat: "actions", date: "2026-08-18" },
+            { en: "Swim", vn: "Bơi", cat: "actions", date: "2026-08-18" },
+            { en: "Fly", vn: "Bay", cat: "actions", date: "2026-08-18" },
+
+            // Khái niệm trừu tượng chung (abstract)
+            { en: "Idea", vn: "Ý tưởng", cat: "abstract", date: "2026-08-18" },
+            { en: "Time", vn: "Thời gian", cat: "abstract", date: "2026-08-18" },
+            { en: "Success", vn: "Sự thành công", cat: "abstract", date: "2026-08-18" },
+            { en: "Freedom", vn: "Sự tự do", cat: "abstract", date: "2026-08-18" },
+            { en: "Truth", vn: "Sự thật", cat: "abstract", date: "2026-08-18" }
         ];
 
-        let words = JSON.parse(localStorage.getItem('my_vocab_game_v100')) || defaultWords;
+        let words = JSON.parse(localStorage.getItem('my_vocab_game_v102')) || defaultWords;
         let wrongWords = [];
         let selectedCategory = 'all';
         let selectedDate = 'all';
@@ -460,23 +510,33 @@
         }
         setTheme(localStorage.getItem('my_vocab_theme') || 'default');
 
-        function speakWord(text, lang = 'en-US', callback = null) {
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = lang;
-                utterance.rate = 0.9;
-                if (callback) {
-                    utterance.onend = callback;
+        // Hàm đọc phát âm: Tiếng Anh dùng SpeechSynthesis, Tiếng Việt dùng giọng Google cực chuẩn
+        function speakWord(text, isEnglish = true, callback = null) {
+            if (isEnglish) {
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = 'en-US';
+                    utterance.rate = 0.9;
+                    if (callback) utterance.onend = callback;
+                    window.speechSynthesis.speak(utterance);
+                } else if (callback) {
+                    callback();
                 }
-                window.speechSynthesis.speak(utterance);
             } else {
-                if (callback) callback();
+                // Dùng Google TTS cho tiếng Việt để phát âm chuẩn xác tuyệt đối không bị nửa mùa
+                const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=vi&client=tw-ob&q=${encodeURIComponent(text)}`;
+                const audio = new Audio(url);
+                audio.onended = () => { if (callback) callback(); };
+                audio.onerror = () => { if (callback) callback(); };
+                audio.play().catch(err => {
+                    if (callback) callback();
+                });
             }
         }
 
         function saveWords() {
-            localStorage.setItem('my_vocab_game_v100', JSON.stringify(words));
+            localStorage.setItem('my_vocab_game_v102', JSON.stringify(words));
             updateDateFilterOptions();
             renderWordList();
         }
@@ -596,14 +656,14 @@
             if (input.toLowerCase() === correct.toLowerCase()) {
                 resultDiv.className = "result success";
                 resultDiv.innerText = `Chính xác! 🔊 (${correct})`;
-                speakWord(correct);
+                speakWord(correct, true);
                 
                 wrongWords = wrongWords.filter(w => w.en !== correct);
                 setTimeout(nextQuestion, 1200);
             } else {
                 resultDiv.className = "result error";
                 resultDiv.innerText = `Sai rồi! Đáp án là: ${correct}`;
-                speakWord(correct);
+                speakWord(correct, true);
                 
                 if (!wrongWords.some(w => w.en === correct)) {
                     wrongWords.push(correctWordObj);
@@ -632,14 +692,14 @@
                     if (opt === correctWordObj.en) {
                         document.getElementById('result-message').className = "result success";
                         document.getElementById('result-message').innerText = "Chính xác! 🔊";
-                        speakWord(correctWordObj.en);
+                        speakWord(correctWordObj.en, true);
                         
                         wrongWords = wrongWords.filter(w => w.en !== correctWordObj.en);
                         setTimeout(nextQuestion, 1200);
                     } else {
                         document.getElementById('result-message').className = "result error";
                         document.getElementById('result-message').innerText = `Sai rồi! Là: ${correctWordObj.en}`;
-                        speakWord(correctWordObj.en);
+                        speakWord(correctWordObj.en, true);
                         
                         if (!wrongWords.some(w => w.en === correctWordObj.en)) {
                             wrongWords.push(correctWordObj);
@@ -741,7 +801,7 @@
             for (let i = 0; i < activeFallingWords.length; i++) {
                 let item = activeFallingWords[i];
                 if (item.wordData.en.toLowerCase() === typedText) {
-                    speakWord(item.wordData.en);
+                    speakWord(item.wordData.en, true);
                     item.element.remove();
                     activeFallingWords.splice(i, 1);
                     
@@ -787,10 +847,10 @@
                 const item = listToPlay[index];
                 document.getElementById('playlist-status').innerText = `Đang phát (${index + 1}/${listToPlay.length}): ${item.en} - ${item.vn}`;
 
-                speakWord(item.en, 'en-US', () => {
+                speakWord(item.en, true, () => {
                     if (!isPlayingList) return;
                     playlistTimer = setTimeout(() => {
-                        speakWord(item.vn, 'vi-VN', () => {
+                        speakWord(item.vn, false, () => {
                             if (!isPlayingList) return;
                             playlistTimer = setTimeout(() => {
                                 index++;
