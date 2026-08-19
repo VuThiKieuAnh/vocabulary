@@ -70,7 +70,6 @@
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; transition: background 0.3s, color 0.3s; }
         body { background-color: var(--bg-color); color: var(--text-color); padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; margin: 0; }
         
-        /* MÀN HÌNH CHÀO */
         #welcome-screen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -111,7 +110,6 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
-        /* GIAO DIỆN GAME CHÍNH */
         .theme-selector { display: flex; gap: 10px; margin-bottom: 20px; background: var(--container-bg); padding: 10px; border-radius: 50px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .theme-btn { width: 30px; height: 30px; border-radius: 50%; border: 2px solid #fff; cursor: pointer; box-shadow: inset 0 0 3px rgba(0,0,0,0.2); }
         .theme-btn.active { transform: scale(1.2); border-color: var(--text-color); }
@@ -122,13 +120,25 @@
         .filter-section { display: flex; gap: 10px; margin-bottom: 15px; }
         .category-select, select.form-select, input[type="date"] { width: 100%; padding: 10px; border: 2px solid var(--primary-color); border-radius: 8px; font-weight: bold; background: var(--card-bg); color: var(--text-color); outline: none; cursor: pointer; font-size: 14px; }
 
-        .mode-select { display: flex; gap: 8px; margin-bottom: 20px; }
-        button { padding: 10px; border: none; background: var(--primary-color); color: white; border-radius: 8px; cursor: pointer; flex: 1; font-weight: bold; font-size: 13px; }
+        .mode-select { display: flex; gap: 6px; margin-bottom: 20px; flex-wrap: wrap; }
+        .mode-select button { flex: 1; min-width: 100px; }
+        button { padding: 10px; border: none; background: var(--primary-color); color: white; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 13px; }
         button:hover { background: var(--primary-hover); }
         button.active { background: var(--success-color); box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
 
         .card { background: var(--card-bg); padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 15px; border: 1px solid var(--border-color); position: relative; }
         .vietnamese-word { font-size: 24px; font-weight: bold; color: var(--vn-word-color); margin-bottom: 15px; }
+
+        /* Style cho chế độ xếp chữ tương tác */
+        .scramble-game-area { display: flex; flex-direction: column; gap: 15px; align-items: center; margin-bottom: 15px; }
+        .answer-slots { display: flex; justify-content: center; gap: 6px; min-height: 45px; flex-wrap: wrap; }
+        .slot-box { width: 38px; height: 38px; border: 2px dashed var(--primary-color); background: var(--container-bg); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; color: var(--text-color); cursor: pointer; text-transform: uppercase; }
+        .slot-box.filled { border-style: solid; background: var(--primary-color); color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+
+        .source-letters { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; min-height: 45px; }
+        .letter-tile { width: 38px; height: 38px; background: var(--container-bg); border: 2px solid var(--primary-color); color: var(--primary-color); font-size: 20px; font-weight: bold; display: flex; align-items: center; justify-content: center; border-radius: 6px; cursor: pointer; text-transform: uppercase; box-shadow: 0 2px 4px rgba(0,0,0,0.05); user-select: none; }
+        .letter-tile:hover { background: var(--primary-color); color: white; transform: translateY(-2px); }
+        .letter-tile.used { opacity: 0.3; pointer-events: none; border-color: var(--border-color); background: var(--border-color); color: #888; }
 
         input[type="text"] { width: 100%; padding: 12px; margin-bottom: 10px; border: 2px solid var(--border-color); border-radius: 8px; font-size: 15px; background: var(--list-item-bg); color: var(--text-color); }
         input[type="text"]:focus { outline: none; border-color: var(--primary-color); }
@@ -169,7 +179,6 @@
 </head>
 <body>
 
-    <!-- MÀN HÌNH CHÀO -->
     <div id="welcome-screen">
         <div class="welcome-card">
             <div class="game-icons">
@@ -178,12 +187,11 @@
                 <span>🚀</span>
             </div>
             <h1>Game Từ Vựng Tiếng Anh</h1>
-            <p>Hơn 100 từ vựng số đếm, hình khối và các chủ đề có sẵn. Đã bổ sung đầy đủ ít nhất 5 từ phổ biến cho mỗi chủ đề!</p>
+            <p>Hơn 100 từ vựng phong phú. Chế độ Sắp Xếp nay đã hỗ trợ bấm chọn xếp ô chữ cực mượt!</p>
             <button class="start-game-btn" onclick="enterGame()">🎮 Bắt Đầu Chơi</button>
         </div>
     </div>
 
-    <!-- GIAO DIỆN GAME CHÍNH -->
     <div class="theme-selector" id="theme-selector">
         <div class="theme-btn active" style="background: #007bff;" onclick="setTheme('default')" title="Blue"></div>
         <div class="theme-btn" style="background: #3a3a3a;" onclick="setTheme('dark')" title="Dark"></div>
@@ -220,15 +228,24 @@
         <div class="mode-select">
             <button id="btn-type-mode" class="active" onclick="switchMode('type')">⌨️ Tự Gõ</button>
             <button id="btn-choice-mode" onclick="switchMode('choice')">📝 Trắc Nghiệm</button>
+            <button id="btn-scramble-mode" onclick="switchMode('scramble')">🔀 Sắp Xếp</button>
             <button id="btn-rocket-mode" onclick="switchMode('rocket')">🚀 Bắn Tên Lửa</button>
         </div>
 
         <div class="card" id="game-card">
             <div class="vietnamese-word" id="target-vn">Đang tải...</div>
             
+            <!-- Giao diện xếp ô chữ tương tác -->
+            <div id="scramble-container" style="display: none;">
+                <div class="scramble-game-area">
+                    <div class="answer-slots" id="answer-slots"></div>
+                    <div class="source-letters" id="source-letters"></div>
+                </div>
+            </div>
+
             <div id="type-container">
                 <input type="text" id="user-input" placeholder="Type in English..." onkeypress="handleKeyPress(event)" autocomplete="off">
-                <button onclick="checkTypeAnswer()">Kiểm tra</button>
+                <button onclick="checkAnswer()">Kiểm tra</button>
             </div>
 
             <div id="choice-container" class="options" style="display: none;"></div>
@@ -301,152 +318,68 @@
             }, 500);
         }
 
-        // Danh sách từ vựng đã được bổ sung đầy đủ ít nhất 5 từ phổ biến cho mỗi chủ đề
         let defaultWords = [
-            // Số đếm & Toán học (numbers)
             { en: "Zero", vn: "Số không", cat: "numbers", date: "2026-08-18" },
             { en: "One", vn: "Số một", cat: "numbers", date: "2026-08-18" },
             { en: "Two", vn: "Số hai", cat: "numbers", date: "2026-08-18" },
             { en: "Three", vn: "Số ba", cat: "numbers", date: "2026-08-18" },
             { en: "Four", vn: "Số bốn", cat: "numbers", date: "2026-08-18" },
-            { en: "Five", vn: "Số năm", cat: "numbers", date: "2026-08-18" }, { en: "Six", vn: "Số sáu", cat: "numbers", date: "2026-08-18" },
-            { en: "Seven", vn: "Số bảy", cat: "numbers", date: "2026-08-18" },
-            { en: "Eight", vn: "Số tám", cat: "numbers", date: "2026-08-18" },
-            { en: "Nine", vn: "Số chín", cat: "numbers", date: "2026-08-18" },
-            { en: "Ten", vn: "Số mười", cat: "numbers", date: "2026-08-18" },
-            { en: "Eleven", vn: "Số mười một", cat: "numbers", date: "2026-08-18" },
-            { en: "Twelve", vn: "Số mười hai", cat: "numbers", date: "2026-08-18" },
-            { en: "Thirteen", vn: "Số mười ba", cat: "numbers", date: "2026-08-18" },
-            { en: "Fourteen", vn: "Số mười bốn", cat: "numbers", date: "2026-08-18" },
-            { en: "Fifteen", vn: "Số mười lăm", cat: "numbers", date: "2026-08-18" },
-            { en: "Sixteen", vn: "Số mười sáu", cat: "numbers", date: "2026-08-18" },
-            { en: "Seventeen", vn: "Số mười bảy", cat: "numbers", date: "2026-08-18" },
-            { en: "Eighteen", vn: "Số mười tám", cat: "numbers", date: "2026-08-18" },
-            { en: "Nineteen", vn: "Số mười chín", cat: "numbers", date: "2026-08-18" },
-            { en: "Twenty", vn: "Số hai mươi", cat: "numbers", date: "2026-08-18" },
-            { en: "Thirty", vn: "Số ba mươi", cat: "numbers", date: "2026-08-18" },
-            { en: "Forty", vn: "Số bốn mươi", cat: "numbers", date: "2026-08-18" },
-            { en: "Fifty", vn: "Số năm mươi", cat: "numbers", date: "2026-08-18" },
-            { en: "Sixty", vn: "Số sáu mươi", cat: "numbers", date: "2026-08-18" },
-            { en: "Seventy", vn: "Số bảy mươi", cat: "numbers", date: "2026-08-18" },
-            { en: "Eighty", vn: "Số tám mươi", cat: "numbers", date: "2026-08-18" },
-            { en: "Ninety", vn: "Số chín mươi", cat: "numbers", date: "2026-08-18" },
-            { en: "Hundred", vn: "hàng trăm", cat: "numbers", date: "2026-08-18" },
-            { en: "Thousand", vn: "hàng nghìn", cat: "numbers", date: "2026-08-18" },
-            { en: "Million", vn: "hàng triệu", cat: "numbers", date: "2026-08-18" },
-            { en: "Billion", vn: "hàng tỷ", cat: "numbers", date: "2026-08-18" },
-            { en: "First", vn: "(Thứ tự) thứ nhất, đầu tiên", cat: "numbers", date: "2026-08-18" },
-            { en: "Second", vn: "(Thứ tự) thứ hai", cat: "numbers", date: "2026-08-18" },
-            { en: "Third", vn: "(Thứ tự) thứ ba", cat: "numbers", date: "2026-08-18" },
-            { en: "Quarter", vn: "Một phần tư", cat: "numbers", date: "2026-08-18" },
-            { en: "Half", vn: "Một nửa", cat: "numbers", date: "2026-08-18" },
-            { en: "Double", vn: "Gấp đôi", cat: "numbers", date: "2026-08-18" },
-            { en: "Triple", vn: "Gấp ba", cat: "numbers", date: "2026-08-18" },
-            { en: "Average", vn: "Số trung bình", cat: "numbers", date: "2026-08-18" },
-
-            // Hình khối & Không gian (Shapes)
+            { en: "Five", vn: "Số năm", cat: "numbers", date: "2026-08-18" },
             { en: "Circle", vn: "Hình tròn", cat: "shapes", date: "2026-08-18" },
             { en: "Square", vn: "Hình vuông", cat: "shapes", date: "2026-08-18" },
             { en: "Triangle", vn: "Hình tam giác", cat: "shapes", date: "2026-08-18" },
             { en: "Rectangle", vn: "Hình chữ nhật", cat: "shapes", date: "2026-08-18" },
             { en: "Oval", vn: "Hình bầu dục", cat: "shapes", date: "2026-08-18" },
-            { en: "Star", vn: "Hình ngôi sao", cat: "shapes", date: "2026-08-18" },
-            { en: "Heart", vn: "Hình trái tim", cat: "shapes", date: "2026-08-18" },
-            { en: "Diamond", vn: "Hình kim cương / thoi", cat: "shapes", date: "2026-08-18" },
-            { en: "Pentagon", vn: "Hình ngũ giác", cat: "shapes", date: "2026-08-18" },
-            { en: "Hexagon", vn: "Hình lục giác", cat: "shapes", date: "2026-08-18" },
-            { en: "Cube", vn: "Hình lập phương", cat: "shapes", date: "2026-08-18" },
-            { en: "Sphere", vn: "Hình cầu", cat: "shapes", date: "2026-08-18" },
-            { en: "Cylinder", vn: "Hình trụ", cat: "shapes", date: "2026-08-18" },
-            { en: "Cone", vn: "Hình nón", cat: "shapes", date: "2026-08-18" },
-            { en: "Pyramid", vn: "Hình chóp / kim tự tháp", cat: "shapes", date: "2026-08-18" },
-            { en: "Line", vn: "Đường thẳng", cat: "shapes", date: "2026-08-18" },
-            { en: "Angle", vn: "Góc", cat: "shapes", date: "2026-08-18" },
-            { en: "Curve", vn: "Đường cong", cat: "shapes", date: "2026-08-18" },
-            { en: "Point", vn: "Điểm", cat: "shapes", date: "2026-08-18" },
-            { en: "Parallel", vn: "Song song", cat: "shapes", date: "2026-08-18" },
-
-            // Cảm xúc & tâm lý (Emotions)
-            { en: "Anxiety", vn: "Sự lo âu", cat: "emotions", date: "2026-08-18" },
             { en: "Happiness", vn: "Niềm hạnh phúc", cat: "emotions", date: "2026-08-18" },
             { en: "Sadness", vn: "Nỗi buồn", cat: "emotions", date: "2026-08-18" },
             { en: "Anger", vn: "Sự tức giận", cat: "emotions", date: "2026-08-18" },
             { en: "Fear", vn: "Nỗi sợ hãi", cat: "emotions", date: "2026-08-18" },
-            { en: "Excitement", vn: "Sự phấn khích", cat: "emotions", date: "2026-08-18" },
-            { en: "Stress", vn: "Sự căng thẳng", cat: "emotions", date: "2026-08-18" },
-            { en: "Depression", vn: "Trạng thái trầm cảm", cat: "emotions", date: "2026-08-18" },
-            { en: "Guilt", vn: "Sự tội lỗi", cat: "emotions", date: "2026-08-18" },
-            { en: "Jealousy", vn: "Sự ghen tị", cat: "emotions", date: "2026-08-18" },
-
-            // Tính cách & phẩm chất (Personality)
+            { en: "Anxiety", vn: "Sự lo âu", cat: "emotions", date: "2026-08-18" },
             { en: "Confidence", vn: "Sự tự tin", cat: "personality", date: "2026-08-18" },
             { en: "Honesty", vn: "Tính trung thực", cat: "personality", date: "2026-08-18" },
             { en: "Kindness", vn: "Lòng tốt", cat: "personality", date: "2026-08-18" },
             { en: "Patience", vn: "Sự kiên nhẫn", cat: "personality", date: "2026-08-18" },
             { en: "Ambition", vn: "Hoài bão, tham vọng", cat: "personality", date: "2026-08-18" },
-            { en: "Generosity", vn: "Tính hào phóng", cat: "personality", date: "2026-08-18" },
-            { en: "Courage", vn: "Sự can đảm", cat: "personality", date: "2026-08-18" },
-            { en: "Humility", vn: "Tính khiêm tốn", cat: "personality", date: "2026-08-18" },
-            { en: "Sincerity", vn: "Sự chân thành", cat: "personality", date: "2026-08-18" },
-            { en: "Creativity", vn: "Tính sáng tạo", cat: "personality", date: "2026-08-18" },
-
-            // Quan hệ xã hội & đời sống (relationships)
             { en: "Family", vn: "Gia đình", cat: "relationships", date: "2026-08-18" },
             { en: "Friend", vn: "Bạn bè", cat: "relationships", date: "2026-08-18" },
             { en: "Colleague", vn: "Đồng nghiệp", cat: "relationships", date: "2026-08-18" },
             { en: "Neighbor", vn: "Hàng xóm", cat: "relationships", date: "2026-08-18" },
             { en: "Community", vn: "Cộng đồng", cat: "relationships", date: "2026-08-18" },
-
-            // Kinh tế, tài chính & học thuật (economics)
             { en: "Inflation", vn: "Lạm phát", cat: "economics", date: "2026-08-18" },
             { en: "Recession", vn: "Suy thoái kinh tế", cat: "economics", date: "2026-08-18" },
             { en: "Investment", vn: "Sự đầu tư", cat: "economics", date: "2026-08-18" },
             { en: "Budget", vn: "Ngân sách", cat: "economics", date: "2026-08-18" },
             { en: "Profit", vn: "Lợi nhuận", cat: "economics", date: "2026-08-18" },
-
-            // Nghề nghiệp & vai trò xã hội (occupations)
             { en: "Doctor", vn: "Bác sĩ", cat: "occupations", date: "2026-08-18" },
             { en: "Teacher", vn: "Giáo viên", cat: "occupations", date: "2026-08-18" },
             { en: "Engineer", vn: "Kỹ sư", cat: "occupations", date: "2026-08-18" },
             { en: "Lawyer", vn: "Luật sư", cat: "occupations", date: "2026-08-18" },
             { en: "Nurse", vn: "Y tá", cat: "occupations", date: "2026-08-18" },
-
-            // Pháp luật, tội phạm & bạo lực (law)
             { en: "Crime", vn: "Tội phạm", cat: "law", date: "2026-08-18" },
             { en: "Judge", vn: "Thẩm phán", cat: "law", date: "2026-08-18" },
             { en: "Police", vn: "Cảnh sát", cat: "law", date: "2026-08-18" },
             { en: "Prison", vn: "Nhà tù", cat: "law", date: "2026-08-18" },
             { en: "Trial", vn: "Phiên tòa xét xử", cat: "law", date: "2026-08-18" },
-
-            // Trang phục & vật dụng cá nhân (clothing)
             { en: "Shirt", vn: "Áo sơ mi", cat: "clothing", date: "2026-08-18" },
             { en: "Pants", vn: "Quần dài", cat: "clothing", date: "2026-08-18" },
             { en: "Shoes", vn: "Giày", cat: "clothing", date: "2026-08-18" },
             { en: "Jacket", vn: "Áo khoác", cat: "clothing", date: "2026-08-18" },
             { en: "Hat", vn: "Mũ, nón", cat: "clothing", date: "2026-08-18" },
-
-            // Động vật & thiên nhiên (animals_nature)
             { en: "Lion", vn: "Sư tử", cat: "animals_nature", date: "2026-08-18" },
             { en: "Forest", vn: "Rừng", cat: "animals_nature", date: "2026-08-18" },
             { en: "Mountain", vn: "Núi", cat: "animals_nature", date: "2026-08-18" },
             { en: "River", vn: "Sông", cat: "animals_nature", date: "2026-08-18" },
             { en: "Ocean", vn: "Đại dương", cat: "animals_nature", date: "2026-08-18" },
-
-            // Đồ vật, nhà cửa & kiến trúc (objects_arch)
             { en: "House", vn: "Ngôi nhà", cat: "objects_arch", date: "2026-08-18" },
             { en: "Table", vn: "Cái bàn", cat: "objects_arch", date: "2026-08-18" },
             { en: "Chair", vn: "Cái ghế", cat: "objects_arch", date: "2026-08-18" },
             { en: "Building", vn: "Tòa nhà", cat: "objects_arch", date: "2026-08-18" },
             { en: "Door", vn: "Cửa ra vào", cat: "objects_arch", date: "2026-08-18" },
-
-            // Hành động & chuyển động vật lý (actions)
             { en: "Run", vn: "Chạy", cat: "actions", date: "2026-08-18" },
             { en: "Walk", vn: "Đi bộ", cat: "actions", date: "2026-08-18" },
             { en: "Jump", vn: "Nhảy", cat: "actions", date: "2026-08-18" },
             { en: "Swim", vn: "Bơi", cat: "actions", date: "2026-08-18" },
             { en: "Fly", vn: "Bay", cat: "actions", date: "2026-08-18" },
-
-            // Khái niệm trừu tượng chung (abstract)
             { en: "Idea", vn: "Ý tưởng", cat: "abstract", date: "2026-08-18" },
             { en: "Time", vn: "Thời gian", cat: "abstract", date: "2026-08-18" },
             { en: "Success", vn: "Sự thành công", cat: "abstract", date: "2026-08-18" },
@@ -454,7 +387,7 @@
             { en: "Truth", vn: "Sự thật", cat: "abstract", date: "2026-08-18" }
         ];
 
-        let words = JSON.parse(localStorage.getItem('my_vocab_game_v102')) || defaultWords;
+        let words = JSON.parse(localStorage.getItem('my_vocab_game_v103')) || defaultWords;
         let wrongWords = [];
         let selectedCategory = 'all';
         let selectedDate = 'all';
@@ -510,7 +443,6 @@
         }
         setTheme(localStorage.getItem('my_vocab_theme') || 'default');
 
-        // Hàm đọc phát âm: Tiếng Anh dùng SpeechSynthesis, Tiếng Việt dùng giọng Google cực chuẩn
         function speakWord(text, isEnglish = true, callback = null) {
             if (isEnglish) {
                 if ('speechSynthesis' in window) {
@@ -524,7 +456,6 @@
                     callback();
                 }
             } else {
-                // Dùng Google TTS cho tiếng Việt để phát âm chuẩn xác tuyệt đối không bị nửa mùa
                 const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=vi&client=tw-ob&q=${encodeURIComponent(text)}`;
                 const audio = new Audio(url);
                 audio.onended = () => { if (callback) callback(); };
@@ -536,7 +467,7 @@
         }
 
         function saveWords() {
-            localStorage.setItem('my_vocab_game_v102', JSON.stringify(words));
+            localStorage.setItem('my_vocab_game_v103', JSON.stringify(words));
             updateDateFilterOptions();
             renderWordList();
         }
@@ -590,6 +521,7 @@
             currentMode = mode;
             document.getElementById('btn-type-mode').classList.toggle('active', mode === 'type');
             document.getElementById('btn-choice-mode').classList.toggle('active', mode === 'choice');
+            document.getElementById('btn-scramble-mode').classList.toggle('active', mode === 'scramble');
             document.getElementById('btn-rocket-mode').classList.toggle('active', mode === 'rocket');
             
             const card = document.getElementById('game-card');
@@ -606,8 +538,11 @@
                 card.style.display = 'block';
                 rocketCanvas.style.display = 'none';
                 rocketInput.style.display = 'none';
+                
                 document.getElementById('type-container').style.display = mode === 'type' ? 'block' : 'none';
                 document.getElementById('choice-container').style.display = mode === 'choice' ? 'grid' : 'none';
+                document.getElementById('scramble-container').style.display = mode === 'scramble' ? 'block' : 'none';
+                
                 nextQuestion();
             }
         }
@@ -640,12 +575,102 @@
             }
 
             document.getElementById('target-vn').innerText = currentWord.vn;
-            if (currentMode === 'choice') setupChoiceOptions(currentWord, currentPool);
+            
+            if (currentMode === 'choice') {
+                setupChoiceOptions(currentWord, currentPool);
+            } else if (currentMode === 'scramble') {
+                setupScrambleInteractive(currentWord.en);
+            }
             
             window.activeCurrentWord = currentWord;
         }
 
-        function checkTypeAnswer() {
+        // Logic xử lý Sắp xếp tương tác bấm chọn ô chữ
+        let currentScrambleData = { original: "", slots: [], tiles: [] };
+
+        function setupScrambleInteractive(word) {
+            currentScrambleData.original = word;
+            const letters = word.split('');
+            let scrambled;
+            let attempts = 0;
+            do {
+                scrambled = [...letters].sort(() => Math.random() - 0.5);
+                attempts++;
+            } while (scrambled.join('') === word && letters.length > 1 && attempts < 10);
+
+            currentScrambleData.slots = new Array(letters.length).fill(null);
+            currentScrambleData.tiles = scrambled.map((char, idx) => ({ id: idx, char: char, used: false }));
+
+            renderScrambleBoard();
+        }
+
+        function renderScrambleBoard() {
+            const slotsArea = document.getElementById('answer-slots');
+            const tilesArea = document.getElementById('source-letters');
+            slotsArea.innerHTML = '';
+            tilesArea.innerHTML = '';
+
+            // Vẽ các ô trống điền câu trả lời
+            currentScrambleData.slots.forEach((tile, slotIdx) => {
+                const box = document.createElement('div');
+                box.className = `slot-box ${tile ? 'filled' : ''}`;
+                box.innerText = tile ? tile.char : '';
+                box.onclick = () => {
+                    if (tile) {
+                        // Bấm vào ô đã điền -> trả chữ về kho
+                        currentScrambleData.tiles[tile.id].used = false;
+                        currentScrambleData.slots[slotIdx] = null;
+                        renderScrambleBoard();
+                    }
+                };
+                slotsArea.appendChild(box);
+            });
+
+            // Vẽ các chữ cái ở kho bên dưới
+            currentScrambleData.tiles.forEach((tile) => {
+                const tileEl = document.createElement('div');
+                tileEl.className = `letter-tile ${tile.used ? 'used' : ''}`;
+                tileEl.innerText = tile.char;
+                tileEl.onclick = () => {
+                    if (!tile.used) {
+                        // Tìm ô trống đầu tiên để điền chữ vào
+                        const emptySlotIdx = currentScrambleData.slots.indexOf(null);
+                        if (emptySlotIdx !== -1) {
+                            currentScrambleData.slots[emptySlotIdx] = tile;
+                            tile.used = true;
+                            renderScrambleBoard();
+
+                            // Kiểm tra xem đã điền đủ tất cả các ô chưa
+                            if (!currentScrambleData.slots.includes(null)) {
+                                checkScrambleResult();
+                            }
+                        }
+                    }
+                };
+                tilesArea.appendChild(tileEl);
+            });
+        }
+
+        function checkScrambleResult() {
+            const userAnswer = currentScrambleData.slots.map(t => t.char).join('');
+            const correctWord = currentScrambleData.original;
+            const resultDiv = document.getElementById('result-message');
+            const correctWordObj = window.activeCurrentWord;
+
+            if (userAnswer.toLowerCase() === correctWord.toLowerCase()) {
+                resultDiv.className = "result success";
+                resultDiv.innerText = `Chính xác! 🔊 (${correctWord})`;
+                speakWord(correctWord, true);
+                
+                wrongWords = wrongWords.filter(w => w.en !== correctWord);
+                setTimeout(nextQuestion, 1200);
+            } else {
+                resultDiv.className = "result error";
+                resultDiv.innerText = `Chưa đúng, thử lại nhé!`;
+            }
+        }
+
+        function checkAnswer() {
             const currentPool = getFilteredWords();
             if (currentWordIndex === -1 || currentPool.length === 0) return;
             const input = document.getElementById('user-input').value.trim();
@@ -671,7 +696,7 @@
             }
         }
 
-        function handleKeyPress(e) { if (e.key === 'Enter') checkTypeAnswer(); }
+        function handleKeyPress(e) { if (e.key === 'Enter') checkAnswer(); }
 
         function setupChoiceOptions(correctWord, currentPool) {
             const container = document.getElementById('choice-container');
