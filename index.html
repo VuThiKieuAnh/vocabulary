@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Từ Vựng Tiếng Anh - Đặt Câu Nâng Cao</title>
+    <title>Game Từ Vựng Tiếng Anh - Đầy Đủ Chế Độ</title>
     <style>
         :root {
             --bg-color: #f0f4f8;
@@ -91,13 +91,13 @@
             width: 90%;
             animation: fadeIn 1s ease-in-out;
         }
-        .game-icons { font-size: 45px; margin-bottom: 15px; display: flex; justify-content: center; gap: 15px; }
-        .welcome-card h1 { color: #ffffff; font-size: 2.2rem; margin-bottom: 10px; }
-        .welcome-card p { color: #d0e1fd; font-size: 1.05rem; margin-bottom: 30px; line-height: 1.5; }
+        .game-icons { font-size: 40px; margin-bottom: 15px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+        .welcome-card h1 { color: #ffffff; font-size: 2rem; margin-bottom: 10px; }
+        .welcome-card p { color: #d0e1fd; font-size: 1rem; margin-bottom: 25px; line-height: 1.5; }
         .start-game-btn {
             background: linear-gradient(45deg, #00b09b, #96c93d);
             color: white; border: none; padding: 14px 35px;
-            font-size: 1.2rem; font-weight: bold; border-radius: 50px;
+            font-size: 1.1rem; font-weight: bold; border-radius: 50px;
             cursor: pointer; box-shadow: 0 5px 15px rgba(0, 176, 155, 0.4);
         }
 
@@ -113,8 +113,8 @@
         .filter-section { display: flex; gap: 10px; margin-bottom: 15px; }
         .category-select, select.form-select { width: 100%; padding: 10px; border: 2px solid var(--primary-color); border-radius: 8px; font-weight: bold; background: var(--card-bg); color: var(--text-color); outline: none; cursor: pointer; font-size: 14px; }
 
-        .mode-select { display: flex; gap: 6px; margin-bottom: 20px; flex-wrap: wrap; }
-        .mode-select button { padding: 8px 10px; border: none; background: var(--primary-color); color: white; border-radius: 8px; cursor: pointer; flex: 1; font-weight: bold; font-size: 12px; }
+        .mode-select { display: flex; gap: 5px; margin-bottom: 20px; flex-wrap: wrap; }
+        .mode-select button { padding: 8px 6px; border: none; background: var(--primary-color); color: white; border-radius: 8px; cursor: pointer; flex: 1; font-weight: bold; font-size: 11px; min-width: 75px; }
         .mode-select button:hover { background: var(--primary-hover); }
         .mode-select button.active { background: var(--success-color); box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
 
@@ -130,6 +130,26 @@
         .result { font-weight: bold; margin-top: 10px; text-align: left; font-size: 0.95rem; line-height: 1.4; }
         .success { color: var(--success-color); }
         .error { color: var(--error-color); }
+
+        /* Giao diện cho trò chơi Xếp Lại Từ (Scramble) */
+        .scramble-slots { display: flex; justify-content: center; gap: 6px; margin: 15px 0; min-height: 45px; flex-wrap: wrap; }
+        .scramble-slot { width: 38px; height: 38px; border: 2px dashed var(--primary-color); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; background: var(--container-bg); color: var(--text-color); }
+        .scramble-letters { display: flex; justify-content: center; gap: 6px; margin: 15px 0; flex-wrap: wrap; }
+        .letter-btn { width: 38px; height: 38px; background: var(--primary-color); color: #fff; border: none; border-radius: 6px; font-weight: bold; font-size: 18px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .letter-btn:active { transform: scale(0.95); }
+
+        /* Khung hiển thị câu ví dụ tự động */
+        .example-box {
+            margin-top: 12px;
+            padding: 10px 14px;
+            background: var(--container-bg);
+            border-left: 4px solid var(--primary-color);
+            border-radius: 4px;
+            text-align: left;
+            font-size: 0.9rem;
+            display: none;
+        }
+        .example-box span { color: var(--primary-color); font-weight: bold; }
 
         #game-canvas-container { display: none; position: relative; width: 100%; height: 380px; background: #0d1117; border-radius: 10px; overflow: hidden; border: 2px solid var(--primary-color); }
         .falling-word { position: absolute; color: #58a6ff; font-weight: bold; font-size: 17px; background: rgba(255,255,255,0.12); padding: 4px 8px; border-radius: 6px; border: 1px solid #30363d; white-space: nowrap; }
@@ -158,12 +178,14 @@
     <div id="welcome-screen">
         <div class="welcome-card">
             <div class="game-icons">
-                <span>✍️</span>
-                <span>🌐</span>
                 <span>🚀</span>
+                <span>📝</span>
+                <span>🔤</span>
+                <span>⌨️</span>
+                <span>✍️</span>
             </div>
-            <h1>Game Từ Vựng & Đặt Câu Pro</h1>
-            <p>Học từ vựng thông minh, tự đặt câu tiếng Anh và kiểm tra ngữ pháp chi tiết (Chủ ngữ, Vị ngữ, Giới từ) qua AI API chuyên nghiệp!</p>
+            <h1>Game Từ Vựng Pro</h1>
+            <p>Học từ vựng với các chế độ: Bắn tên lửa, Trắc nghiệm, Sắp xếp từ, Tự gõ từ và Đặt câu thông minh!</p>
             <button class="start-game-btn" onclick="enterGame()">🎮 Bắt Đầu Ngay</button>
         </div>
     </div>
@@ -177,7 +199,7 @@
     </div>
 
     <div class="container">
-        <h2 style="border:none; font-size:1.5rem; margin-bottom:15px;">🌟 Luyện Từ Vựng & Ngữ Pháp Pro</h2>
+        <h2 style="border:none; font-size:1.5rem; margin-bottom:15px;">🌟 Luyện Từ Vựng Tiếng Anh</h2>
 
         <div class="filter-section">
             <select id="category-filter" class="category-select" onchange="onFilterChange()">
@@ -201,35 +223,57 @@
             </select>
         </div>
 
+        <!-- Thứ tự mới: Tên lửa -> Trắc nghiệm -> Xếp từ -> Tự gõ -> Đặt câu -->
         <div class="mode-select">
-            <button id="btn-type-mode" class="active" onclick="switchMode('type')">⌨️ Tự Gõ</button>
+            <button id="btn-rocket-mode" class="active" onclick="switchMode('rocket')">🚀 Tên Lửa</button>
             <button id="btn-choice-mode" onclick="switchMode('choice')">📝 Trắc Nghiệm</button>
-            <button id="btn-sentence-mode" onclick="switchMode('sentence')">✍️ Tự Đặt Câu</button>
-            <button id="btn-rocket-mode" onclick="switchMode('rocket')">🚀 Bắn Tên Lửa</button>
+            <button id="btn-scramble-mode" onclick="switchMode('scramble')">🔤 Xếp Từ</button>
+            <button id="btn-type-mode" onclick="switchMode('type')">⌨️ Tự Gõ</button>
+            <button id="btn-sentence-mode" onclick="switchMode('sentence')">✍️ Đặt Câu</button>
         </div>
 
-        <div class="card" id="game-card">
+        <div class="card" id="game-card" style="display: none;">
             <div class="vietnamese-word" id="target-vn">Đang tải...</div>
             <div id="target-en-hint" style="font-size: 13px; color: var(--primary-color); margin-bottom: 10px; font-weight: bold; display: none;">Từ mục tiêu bắt buộc: <span id="current-en-word"></span></div>
             
-            <div id="type-container">
+            <!-- Giao diện Chế độ Trắc Nghiệm -->
+            <div id="choice-container" class="options" style="display: none;"></div>
+
+            <!-- Giao diện Chế độ Xếp Lại Từ (Scramble) -->
+            <div id="scramble-container" style="display: none;">
+                <div class="scramble-slots" id="scramble-slots"></div>
+                <div class="scramble-letters" id="scramble-letters"></div>
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button onclick="resetScrambleInput()" style="flex:1; padding:8px; background:var(--error-color); color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">Xóa lại 🔄</button>
+                    <button onclick="checkScrambleAnswer()" style="flex:1; padding:8px; background:var(--success-color); color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">Kiểm tra ✅</button>
+                </div>
+            </div>
+
+            <!-- Giao diện Chế độ Tự Gõ (có câu mẫu gợi ý sẵn) -->
+            <div id="type-container" style="display: none;">
+                <div id="type-example-hint" style="font-size: 13px; background: var(--sync-bg); padding: 8px; border-radius: 6px; margin-bottom: 10px; text-align: left; border: 1px dashed var(--primary-color);">
+                    💡 <strong>Câu mẫu gợi ý:</strong> <span id="type-sample-sentence" style="font-style: italic;">Đang tải...</span>
+                </div>
                 <input type="text" id="user-input" placeholder="Type in English..." onkeypress="handleKeyPress(event)" autocomplete="off">
                 <button onclick="checkTypeAnswer()" style="width:100%; padding:10px; background:var(--primary-color); color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">Kiểm tra</button>
             </div>
 
-            <div id="choice-container" class="options" style="display: none;"></div>
-
             <!-- Giao diện Chế độ Tự Đặt Câu tích hợp LanguageTool API -->
             <div id="sentence-container" style="display: none; text-align: left;">
-                <p style="font-size: 13px; margin-bottom: 6px;">Tự viết câu tiếng Anh chứa từ mục tiêu. Hệ thống sẽ check ngữ pháp chi tiết (chia động từ, giới từ, cấu trúc chủ/vị ngữ):</p>
+                <p style="font-size: 13px; margin-bottom: 6px;">Tự viết câu tiếng Anh chứa từ mục tiêu. Hệ thống sẽ check ngữ pháp chi tiết:</p>
                 <textarea id="user-sentence" rows="3" placeholder="Ví dụ: I have great confidence in my skills..."></textarea>
                 <button id="btn-check-grammar" onclick="checkUserSentenceWithAPI()" style="width:100%; padding:10px; background:var(--primary-color); color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">🔍 Kiểm tra Ngữ Pháp Chuyên Sâu</button>
             </div>
 
             <div class="result" id="result-message"></div>
+            
+            <!-- Khung hiển thị câu ví dụ hoàn chỉnh khi trả lời đúng -->
+            <div id="example-box" class="example-box">
+                💡 <strong>Câu ví dụ:</strong> <span id="example-text"></span>
+            </div>
         </div>
 
-        <div id="game-canvas-container">
+        <div id="game-canvas-container" style="display: block;">
             <div class="score-board">Điểm: <span id="rocket-score">0</span></div>
             <div id="words-area"></div>
             <div class="rocket-launcher">🚀</div>
@@ -241,7 +285,7 @@
             </div>
         </div>
         
-        <div id="rocket-input-container" style="display: none; margin-top: 10px;">
+        <div id="rocket-input-container" style="display: block; margin-top: 10px;">
             <input type="text" id="rocket-input" placeholder="Gõ từ tiếng Anh đang rơi..." oninput="checkRocketInput()" autocomplete="off">
         </div>
 
@@ -293,21 +337,26 @@
         }
 
         let defaultWords = [
-            { en: "Zero", vn: "Số không", cat: "numbers", date: "2026-08-18" },
-            { en: "One", vn: "Số một", cat: "numbers", date: "2026-08-18" },
-            { en: "Circle", vn: "Hình tròn", cat: "shapes", date: "2026-08-18" },
-            { en: "Anxiety", vn: "Sự lo âu", cat: "emotions", date: "2026-08-18" },
-            { en: "Confidence", vn: "Sự tự tin", cat: "personality", date: "2026-08-18" },
-            { en: "Doctor", vn: "Bác sĩ", cat: "occupations", date: "2026-08-18" },
-            { en: "Inflation", vn: "Lạm phát", cat: "economics", date: "2026-08-18" }
+            { en: "Zero", vn: "Số không", cat: "numbers", date: "2026-08-18", example: "He scored zero in the test." },
+            { en: "One", vn: "Số một", cat: "numbers", date: "2026-08-18", example: "Give me one good reason." },
+            { en: "Circle", vn: "Hình tròn", cat: "shapes", date: "2026-08-18", example: "Draw a perfect circle on the paper." },
+            { en: "Anxiety", vn: "Sự lo âu", cat: "emotions", date: "2026-08-18", example: "She felt a deep sense of anxiety before the interview." },
+            { en: "Confidence", vn: "Sự tự tin", cat: "personality", date: "2026-08-18", example: "He has great confidence in his speaking skills." },
+            { en: "Doctor", vn: "Bác sĩ", cat: "occupations", date: "2026-08-18", example: "You should see a doctor if symptoms persist." },
+            { en: "Inflation", vn: "Lạm phát", cat: "economics", date: "2026-08-18", example: "Inflation rates have increased this year." }
         ];
 
-        let words = JSON.parse(localStorage.getItem('my_vocab_game_v103')) || defaultWords;
+        let words = JSON.parse(localStorage.getItem('my_vocab_game_v106')) || defaultWords;
         let wrongWords = [];
         let selectedCategory = 'all';
         let selectedDate = 'all';
-        let currentMode = 'type';
+        let currentMode = 'rocket'; // Mặc định vào game đầu tiên là tên lửa
         let currentWordIndex = -1;
+
+        // Biến dành riêng cho chế độ Xếp Lại Từ
+        let scrambleTargetWord = "";
+        let currentScrambleLetters = [];
+        let userChosenLetters = [];
 
         function getLevenshteinDistance(a, b) {
             const matrix = [];
@@ -326,7 +375,100 @@
             return matrix[b.length][a.length];
         }
 
-        // TÍCH HỢP NGỮ PHÁP CHUYÊN SÂU QUA LANGUAGE-TOOL API
+        function setupScrambleGame(wordObj) {
+            scrambleTargetWord = wordObj.en;
+            userChosenLetters = [];
+            const cleanWord = scrambleTargetWord.replace(/[^a-zA-Z]/g, '');
+            let letters = cleanWord.split('');
+            for (let i = letters.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [letters[i], letters[j]] = [letters[j], letters[i]];
+            }
+            currentScrambleLetters = letters.map((l, idx) => ({ char: l, id: idx, used: false }));
+            renderScrambleBoard();
+        }
+
+        function renderScrambleBoard() {
+            const slotsContainer = document.getElementById('scramble-slots');
+            const lettersContainer = document.getElementById('scramble-letters');
+            slotsContainer.innerHTML = '';
+            lettersContainer.innerHTML = '';
+
+            const cleanWord = scrambleTargetWord.replace(/[^a-zA-Z]/g, '');
+
+            for (let i = 0; i < cleanWord.length; i++) {
+                const slot = document.createElement('div');
+                slot.className = 'scramble-slot';
+                if (userChosenLetters[i]) {
+                    slot.innerText = userChosenLetters[i].char;
+                    slot.style.borderColor = 'var(--success-color)';
+                }
+                slotsContainer.appendChild(slot);
+            }
+
+            currentScrambleLetters.forEach((item, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'letter-btn';
+                btn.innerText = item.char;
+                if (item.used) {
+                    btn.style.opacity = '0.3';
+                    btn.style.cursor = 'not-allowed';
+                    btn.disabled = true;
+                } else {
+                    btn.onclick = () => chooseLetter(index);
+                }
+                lettersContainer.appendChild(btn);
+            });
+        }
+
+        function chooseLetter(index) {
+            const cleanWord = scrambleTargetWord.replace(/[^a-zA-Z]/g, '');
+            if (userChosenLetters.length < cleanWord.length) {
+                currentScrambleLetters[index].used = true;
+                userChosenLetters.push(currentScrambleLetters[index]);
+                renderScrambleBoard();
+                if (userChosenLetters.length === cleanWord.length) {
+                    checkScrambleAnswer();
+                }
+            }
+        }
+
+        function resetScrambleInput() {
+            currentScrambleLetters.forEach(item => item.used = false);
+            userChosenLetters = [];
+            renderScrambleBoard();
+            document.getElementById('result-message').innerText = '';
+        }
+
+        function checkScrambleAnswer() {
+            const cleanWord = scrambleTargetWord.replace(/[^a-zA-Z]/g, '');
+            const userWord = userChosenLetters.map(i => i.char).join('');
+            const resultDiv = document.getElementById('result-message');
+            const exampleBox = document.getElementById('example-box');
+            const currentPool = getFilteredWords();
+            const correctWordObj = window.activeCurrentWord || currentPool[currentWordIndex];
+
+            if (userWord.toLowerCase() === cleanWord.toLowerCase()) {
+                resultDiv.className = "result success";
+                resultDiv.innerText = `Chính xác! 🔊 (${scrambleTargetWord})`;
+                
+                if (correctWordObj.example) {
+                    document.getElementById('example-text').innerText = correctWordObj.example;
+                    exampleBox.style.display = 'block';
+                }
+
+                speakWord(scrambleTargetWord, true);
+                wrongWords = wrongWords.filter(w => w.en !== scrambleTargetWord);
+                setTimeout(nextQuestion, 4000);
+            } else if (userChosenLetters.length === cleanWord.length) {
+                resultDiv.className = "result error";
+                resultDiv.innerText = `Sai rồi! Đáp án đúng là: ${scrambleTargetWord}`;
+                exampleBox.style.display = 'none';
+                speakWord(scrambleTargetWord, true);
+                if (!wrongWords.some(w => w.en === scrambleTargetWord)) wrongWords.push(correctWordObj);
+            }
+        }
+
         async function checkUserSentenceWithAPI() {
             const currentPool = getFilteredWords();
             if (currentWordIndex === -1 || currentPool.length === 0) return;
@@ -334,29 +476,30 @@
             const correctWordObj = window.activeCurrentWord || currentPool[currentWordIndex];
             const targetWord = correctWordObj.en;
             const resultDiv = document.getElementById('result-message');
+            const exampleBox = document.getElementById('example-box');
 
             if (!userSentenceText) {
                 resultDiv.className = "result error";
                 resultDiv.innerText = "⚠️ Vui lòng nhập vào một câu hoàn chỉnh.";
+                exampleBox.style.display = 'none';
                 return;
             }
 
-            // 1. Kiểm tra xem câu có chứa từ vựng mục tiêu không
-            const lowerSentence = userSentenceText.toLowerCase();
             const lowerTarget = targetWord.toLowerCase();
             const wordsInSentence = userSentenceText.split(/\s+/).map(w => w.replace(/[^a-zA-Z]/g, '').toLowerCase());
             
             if (!wordsInSentence.includes(lowerTarget)) {
                 resultDiv.className = "result error";
                 resultDiv.innerHTML = `❌ Lỗi thiếu từ vựng: Câu của bạn chưa chứa từ mục tiêu yêu cầu là "<strong>${targetWord}</strong>".`;
+                exampleBox.style.display = 'none';
                 return;
             }
 
             resultDiv.className = "result";
-            resultDiv.innerText = "⏳ Đang kết nối hệ thống kiểm tra ngữ pháp, giới từ, chủ/vị ngữ...";
+            resultDiv.innerText = "⏳ Đang kết nối kiểm tra ngữ pháp, giới từ, cấu trúc chủ-vị...";
+            exampleBox.style.display = 'none';
 
             try {
-                // Gửi request tới LanguageTool Public API để quét lỗi cấu trúc, giới từ, chia động từ...
                 const response = await fetch('https://api.languagetool.org/v2/check', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -372,8 +515,14 @@
                 if (matches.length === 0) {
                     resultDiv.className = "result success";
                     resultDiv.innerHTML = `✅ Tuyệt vời! Câu hoàn toàn chuẩn ngữ pháp, giới từ và cấu trúc chủ-vị.`;
+                    
+                    if (correctWordObj.example) {
+                        document.getElementById('example-text').innerText = correctWordObj.example;
+                        exampleBox.style.display = 'block';
+                    }
+
                     speakWord(targetWord, true);
-                    setTimeout(nextQuestion, 4000);
+                    setTimeout(nextQuestion, 5000);
                 } else {
                     let errorMessages = matches.map(m => {
                         let suggestions = m.replacements.slice(0, 3).map(r => r.value).join(', ');
@@ -383,11 +532,13 @@
 
                     resultDiv.className = "result error";
                     resultDiv.innerHTML = `⚠️ Phát hiện lỗi ngữ pháp/giới từ/cấu trúc:<br>` + errorMessages.join('<br>');
+                    exampleBox.style.display = 'none';
                 }
 
             } catch (err) {
                 resultDiv.className = "result error";
                 resultDiv.innerText = "⚠️ Không thể kết nối tới máy chủ kiểm tra ngữ pháp. Vui lòng kiểm tra lại mạng.";
+                exampleBox.style.display = 'none';
             }
         }
 
@@ -439,7 +590,7 @@
         }
 
         function saveWords() {
-            localStorage.setItem('my_vocab_game_v103', JSON.stringify(words));
+            localStorage.setItem('my_vocab_game_v106', JSON.stringify(words));
             updateDateFilterOptions();
             renderWordList();
         }
@@ -474,7 +625,7 @@
                 if (words.some(w => w.en.toLowerCase() === en.toLowerCase())) {
                     alert('Từ này đã có trong danh sách!'); return;
                 }
-                words.push({ en: en, vn: vn, cat: cat, date: todayStr });
+                words.push({ en: en, vn: vn, cat: cat, date: todayStr, example: `This is an example sentence for ${en}.` });
                 saveWords();
                 document.getElementById('new-en').value = '';
                 document.getElementById('new-vn').value = '';
@@ -490,10 +641,11 @@
 
         function switchMode(mode) {
             currentMode = mode;
-            document.getElementById('btn-type-mode').classList.toggle('active', mode === 'type');
-            document.getElementById('btn-choice-mode').classList.toggle('active', mode === 'choice');
-            document.getElementById('btn-sentence-mode').classList.toggle('active', mode === 'sentence');
             document.getElementById('btn-rocket-mode').classList.toggle('active', mode === 'rocket');
+            document.getElementById('btn-choice-mode').classList.toggle('active', mode === 'choice');
+            document.getElementById('btn-scramble-mode').classList.toggle('active', mode === 'scramble');
+            document.getElementById('btn-type-mode').classList.toggle('active', mode === 'type');
+            document.getElementById('btn-sentence-mode').classList.toggle('active', mode === 'sentence');
             
             const card = document.getElementById('game-card');
             const rocketCanvas = document.getElementById('game-canvas-container');
@@ -510,10 +662,12 @@
                 rocketCanvas.style.display = 'none';
                 rocketInput.style.display = 'none';
                 
-                document.getElementById('type-container').style.display = mode === 'type' ? 'block' : 'none';
                 document.getElementById('choice-container').style.display = mode === 'choice' ? 'grid' : 'none';
+                document.getElementById('scramble-container').style.display = mode === 'scramble' ? 'block' : 'none';
+                document.getElementById('type-container').style.display = mode === 'type' ? 'block' : 'none';
                 document.getElementById('sentence-container').style.display = mode === 'sentence' ? 'block' : 'none';
                 document.getElementById('target-en-hint').style.display = mode === 'sentence' ? 'block' : 'none';
+                document.getElementById('type-example-hint').style.display = mode === 'type' ? 'block' : 'none';
                 
                 nextQuestion();
             }
@@ -521,6 +675,7 @@
 
         function nextQuestion() {
             document.getElementById('result-message').innerText = '';
+            document.getElementById('example-box').style.display = 'none';
             document.getElementById('user-input').value = '';
             document.getElementById('user-sentence').value = '';
             const currentPool = getFilteredWords();
@@ -549,7 +704,20 @@
 
             document.getElementById('target-vn').innerText = currentWord.vn;
             document.getElementById('current-en-word').innerText = currentWord.en;
-            if (currentMode === 'choice') setupChoiceOptions(currentWord, currentPool);
+            
+            // Cung cấp câu mẫu dạng đục lỗ hoặc ẩn từ cần gõ để gợi ý cho chế độ Tự Gõ
+            if (currentMode === 'type') {
+                let sampleSentence = currentWord.example || `This is an example sentence containing ${currentWord.en}.`;
+                // Ẩn từ gốc trong câu mẫu bằng dấu gạch ngang tương ứng
+                let maskedSentence = sampleSentence.replace(new RegExp(currentWord.en, 'gi'), '____');
+                document.getElementById('type-sample-sentence').innerText = maskedSentence;
+            }
+
+            if (currentMode === 'scramble') {
+                setupScrambleGame(currentWord);
+            } else if (currentMode === 'choice') {
+                setupChoiceOptions(currentWord, currentPool);
+            }
             
             window.activeCurrentWord = currentWord;
         }
@@ -561,15 +729,23 @@
             const correctWordObj = window.activeCurrentWord || currentPool[currentWordIndex];
             const correct = correctWordObj.en;
             const resultDiv = document.getElementById('result-message');
+            const exampleBox = document.getElementById('example-box');
 
             if (input.toLowerCase() === correct.toLowerCase()) {
                 resultDiv.className = "result success";
                 resultDiv.innerText = `Chính xác! 🔊 (${correct})`;
+                
+                if (correctWordObj.example) {
+                    document.getElementById('example-text').innerText = correctWordObj.example;
+                    exampleBox.style.display = 'block';
+                }
+
                 speakWord(correct, true);
                 wrongWords = wrongWords.filter(w => w.en !== correct);
-                setTimeout(nextQuestion, 2000);
+                setTimeout(nextQuestion, 4000);
             } else {
                 resultDiv.className = "result error";
+                exampleBox.style.display = 'none';
                 let suggestionMsg = "";
                 const cleanInput = input.toLowerCase();
                 words.forEach(w => {
@@ -599,17 +775,25 @@
                 btn.innerText = opt;
                 btn.onclick = () => {
                     const correctWordObj = window.activeCurrentWord;
+                    const exampleBox = document.getElementById('example-box');
                     if (opt === correctWordObj.en) {
                         document.getElementById('result-message').className = "result success";
                         document.getElementById('result-message').innerText = "Chính xác! 🔊";
+                        
+                        if (correctWordObj.example) {
+                            document.getElementById('example-text').innerText = correctWordObj.example;
+                            exampleBox.style.display = 'block';
+                        }
+
                         speakWord(correctWordObj.en);
-                        setTimeout(nextQuestion, 1500);
+                        setTimeout(nextQuestion, 3500);
                     } else {
                         document.getElementById('result-message').className = "result error";
                         document.getElementById('result-message').innerText = `Sai rồi! Là: ${correctWordObj.en}`;
+                        exampleBox.style.display = 'none';
                         speakWord(correctWordObj.en);
                         if (!wrongWords.some(w => w.en === correctWordObj.en)) wrongWords.push(correctWordObj);
-                        setTimeout(nextQuestion, 1500);
+                        setTimeout(nextQuestion, 2000);
                     }
                 };
                 container.appendChild(btn);
@@ -752,7 +936,8 @@
 
         updateDateFilterOptions();
         renderWordList();
-        nextQuestion();
+        // Mặc định khởi chạy vào chế độ Bắn Tên Lửa
+        startRocketGame();
     </script>
 </body>
 </html>
