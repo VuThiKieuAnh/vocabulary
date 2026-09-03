@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Từ Vựng Tiếng Anh - Đầy Đủ Chế Độ</title>
+    <title>Game Từ Vựng Tiếng Anh - Tùy Biến Chủ Đề</title>
     <style>
         :root {
             --bg-color: #f0f4f8;
@@ -71,41 +71,30 @@
         body { background-color: var(--bg-color); color: var(--text-color); padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; margin: 0; }
         
         #welcome-screen {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #6e8efb 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
+            display: flex; justify-content: center; align-items: center; z-index: 1000;
         }
         .welcome-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(15px);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 24px;
-            padding: 40px;
-            text-align: center;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-            max-width: 500px;
-            width: 90%;
-            animation: fadeIn 1s ease-in-out;
+            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px);
+            border: 2px solid rgba(255, 255, 255, 0.2); border-radius: 24px;
+            padding: 40px; text-align: center; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            max-width: 500px; width: 90%;
         }
         .game-icons { font-size: 40px; margin-bottom: 15px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
         .welcome-card h1 { color: #ffffff; font-size: 2rem; margin-bottom: 10px; }
         .welcome-card p { color: #d0e1fd; font-size: 1rem; margin-bottom: 25px; line-height: 1.5; }
         .start-game-btn {
-            background: linear-gradient(45deg, #00b09b, #96c93d);
-            color: white; border: none; padding: 14px 35px;
-            font-size: 1.1rem; font-weight: bold; border-radius: 50px;
+            background: linear-gradient(45deg, #00b09b, #96c93d); color: white; border: none;
+            padding: 14px 35px; font-size: 1.1rem; font-weight: bold; border-radius: 50px;
             cursor: pointer; box-shadow: 0 5px 15px rgba(0, 176, 155, 0.4);
         }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        .theme-selector { display: flex; gap: 10px; margin-bottom: 20px; background: var(--container-bg); padding: 10px; border-radius: 50px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .theme-btn { width: 30px; height: 30px; border-radius: 50%; border: 2px solid #fff; cursor: pointer; }
+        .top-bar { display: flex; width: 100%; max-width: 650px; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .theme-selector { display: flex; gap: 8px; background: var(--container-bg); padding: 8px; border-radius: 50px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .theme-btn { width: 26px; height: 26px; border-radius: 50%; border: 2px solid #fff; cursor: pointer; }
         .theme-btn.active { transform: scale(1.2); border-color: var(--text-color); }
+        .settings-btn { background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-color); padding: 8px 12px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; }
 
         .container { background: var(--container-bg); padding: 25px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 650px; }
         h2 { text-align: center; color: var(--text-color); margin-top: 0; font-size: 1.2rem; border-bottom: 2px solid var(--border-color); padding-bottom: 5px; }
@@ -121,8 +110,8 @@
         .card { background: var(--card-bg); padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 15px; border: 1px solid var(--border-color); }
         .vietnamese-word { font-size: 22px; font-weight: bold; color: var(--vn-word-color); margin-bottom: 10px; }
 
-        input[type="text"], textarea { width: 100%; padding: 12px; margin-bottom: 10px; border: 2px solid var(--border-color); border-radius: 8px; font-size: 15px; background: var(--list-item-bg); color: var(--text-color); }
-        input[type="text"]:focus, textarea:focus { outline: none; border-color: var(--primary-color); }
+        input[type="text"], textarea, input[type="password"] { width: 100%; padding: 12px; margin-bottom: 10px; border: 2px solid var(--border-color); border-radius: 8px; font-size: 15px; background: var(--list-item-bg); color: var(--text-color); }
+        input[type="text"]:focus, textarea:focus, input[type="password"]:focus { outline: none; border-color: var(--primary-color); }
 
         .options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .options button { background: var(--container-bg); color: var(--primary-color); border: 2px solid var(--primary-color); padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; }
@@ -131,25 +120,15 @@
         .success { color: var(--success-color); }
         .error { color: var(--error-color); }
 
-        /* Giao diện cho trò chơi Xếp Lại Từ (Scramble) */
         .scramble-slots { display: flex; justify-content: center; gap: 6px; margin: 15px 0; min-height: 45px; flex-wrap: wrap; }
         .scramble-slot { width: 38px; height: 38px; border: 2px dashed var(--primary-color); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; background: var(--container-bg); color: var(--text-color); }
         .scramble-letters { display: flex; justify-content: center; gap: 6px; margin: 15px 0; flex-wrap: wrap; }
         .letter-btn { width: 38px; height: 38px; background: var(--primary-color); color: #fff; border: none; border-radius: 6px; font-weight: bold; font-size: 18px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        .letter-btn:active { transform: scale(0.95); }
 
-        /* Khung hiển thị câu ví dụ tự động */
         .example-box {
-            margin-top: 12px;
-            padding: 10px 14px;
-            background: var(--container-bg);
-            border-left: 4px solid var(--primary-color);
-            border-radius: 4px;
-            text-align: left;
-            font-size: 0.9rem;
-            display: none;
+            margin-top: 12px; padding: 10px 14px; background: var(--container-bg);
+            border-left: 4px solid var(--primary-color); border-radius: 4px; text-align: left; font-size: 0.9rem; display: none;
         }
-        .example-box span { color: var(--primary-color); font-weight: bold; }
 
         #game-canvas-container { display: none; position: relative; width: 100%; height: 380px; background: #0d1117; border-radius: 10px; overflow: hidden; border: 2px solid var(--primary-color); }
         .falling-word { position: absolute; color: #58a6ff; font-weight: bold; font-size: 17px; background: rgba(255,255,255,0.12); padding: 4px 8px; border-radius: 6px; border: 1px solid #30363d; white-space: nowrap; }
@@ -171,6 +150,15 @@
 
         .sync-tools { display: flex; gap: 10px; margin-top: 20px; background: var(--sync-bg); padding: 12px; border-radius: 10px; border: 1px solid var(--border-color); }
         .sync-tools button { font-size: 12px; padding: 8px; background: #17a2b8; border: none; color: #fff; border-radius: 6px; cursor: pointer; flex: 1; }
+
+        #settings-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 2000;
+        }
+        .modal-content {
+            background: var(--container-bg); padding: 25px; border-radius: 14px; width: 90%; max-width: 450px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3); border: 1px solid var(--border-color);
+        }
     </style>
 </head>
 <body>
@@ -185,91 +173,92 @@
                 <span>✍️</span>
             </div>
             <h1>Game Từ Vựng Pro</h1>
-            <p>Học từ vựng với các chế độ: Bắn tên lửa, Trắc nghiệm, Sắp xếp từ, Tự gõ từ và Đặt câu thông minh!</p>
-            <button class="start-game-btn" onclick="enterGame()">🎮 Bắt Đầu Ngay</button>
+            <p>Tự do thêm/xóa chủ đề, học từ vựng qua 5 chế độ: Bắn tên lửa, Trắc nghiệm, Sắp xếp từ, Tự gõ từ và Đặt câu!</p>
+            <button class="start-game-btn" id="btn-start-screen">🎮 Bắt Đầu Ngay</button>
         </div>
     </div>
 
-    <div class="theme-selector" id="theme-selector">
-        <div class="theme-btn active" style="background: #007bff;" onclick="setTheme('default')" title="Blue"></div>
-        <div class="theme-btn" style="background: #3a3a3a;" onclick="setTheme('dark')" title="Dark"></div>
-        <div class="theme-btn" style="background: #8e24aa;" onclick="setTheme('purple')" title="Purple"></div>
-        <div class="theme-btn" style="background: #2e7d32;" onclick="setTheme('green')" title="Green"></div>
-        <div class="theme-btn" style="background: #ef6c00;" onclick="setTheme('orange')" title="Orange"></div>
+    <div id="settings-modal">
+        <div class="modal-content">
+            <h2 style="margin-top:0; border:none;">⚙️ Cấu hình OpenRouter API Key</h2>
+            <p style="font-size: 13px; color: var(--text-color); opacity: 0.8; line-height: 1.4;">
+                Nhập OpenRouter API Key (bắt đầu bằng <code>sk-or-v1-...</code>) để bật tính năng AI chấm điểm.
+            </p>
+            <input type="password" id="api-key-input" placeholder="sk-or-v1-..." autocomplete="off">
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <button id="btn-save-key" style="flex:1; padding:10px; background:var(--success-color); border:none; color:#fff; border-radius:8px; font-weight:bold; cursor:pointer;">Lưu lại</button>
+                <button id="btn-close-key" style="flex:1; padding:10px; background:var(--error-color); border:none; color:#fff; border-radius:8px; font-weight:bold; cursor:pointer;">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="top-bar">
+        <div class="theme-selector" id="theme-selector">
+            <div class="theme-btn active" style="background: #007bff;" data-theme-val="default" title="Blue"></div>
+            <div class="theme-btn" style="background: #3a3a3a;" data-theme-val="dark" title="Dark"></div>
+            <div class="theme-btn" style="background: #8e24aa;" data-theme-val="purple" title="Purple"></div>
+            <div class="theme-btn" style="background: #2e7d32;" data-theme-val="green" title="Green"></div>
+            <div class="theme-btn" style="background: #ef6c00;" data-theme-val="orange" title="Orange"></div>
+        </div>
+        <button class="settings-btn" id="btn-open-settings">🔑 Cài đặt AI Key</button>
     </div>
 
     <div class="container">
         <h2 style="border:none; font-size:1.5rem; margin-bottom:15px;">🌟 Luyện Từ Vựng Tiếng Anh</h2>
 
         <div class="filter-section">
-            <select id="category-filter" class="category-select" onchange="onFilterChange()">
+            <select id="category-filter" class="category-select">
                 <option value="all">🌟 Tất cả chủ đề</option>
-                <option value="numbers">🔢 Số đếm & Toán học</option>
-                <option value="shapes">🔷 Hình khối & Không gian</option>
-                <option value="emotions">🧠 Cảm xúc & tâm lý</option>
-                <option value="personality">🧩 Tính cách & phẩm chất</option>
-                <option value="relationships">👥 Quan hệ xã hội</option>
-                <option value="economics">📉 Kinh tế, tài chính</option>
-                <option value="occupations">👨‍⚕️ Nghề nghiệp</option>
-                <option value="law">⚖️ Pháp luật</option>
-                <option value="clothing">👕 Trang phục</option>
-                <option value="animals_nature">🦁 Động vật & thiên nhiên</option>
-                <option value="objects_arch">🏗️ Đồ vật & kiến trúc</option>
-                <option value="actions">🛠️ Hành động</option>
-                <option value="abstract">📚 Khái niệm trừu tượng</option>
             </select>
-            <select id="date-filter" class="category-select" onchange="onFilterChange()">
+            <select id="date-filter" class="category-select">
                 <option value="all">📅 Tất cả ngày</option>
             </select>
         </div>
 
-        <!-- Thứ tự mới: Tên lửa -> Trắc nghiệm -> Xếp từ -> Tự gõ -> Đặt câu -->
         <div class="mode-select">
-            <button id="btn-rocket-mode" class="active" onclick="switchMode('rocket')">🚀 Tên Lửa</button>
-            <button id="btn-choice-mode" onclick="switchMode('choice')">📝 Trắc Nghiệm</button>
-            <button id="btn-scramble-mode" onclick="switchMode('scramble')">🔤 Xếp Từ</button>
-            <button id="btn-type-mode" onclick="switchMode('type')">⌨️ Tự Gõ</button>
-            <button id="btn-sentence-mode" onclick="switchMode('sentence')">✍️ Đặt Câu</button>
+            <button id="btn-rocket-mode" class="active" data-mode="rocket">🚀 Tên Lửa</button>
+            <button id="btn-choice-mode" data-mode="choice">📝 Trắc Nghiệm</button>
+            <button id="btn-scramble-mode" data-mode="scramble">🔤 Xếp Từ</button>
+            <button id="btn-type-mode" data-mode="type">⌨️ Tự Gõ</button>
+            <button id="btn-sentence-mode" data-mode="sentence">✍️ Đặt Câu</button>
         </div>
 
         <div class="card" id="game-card" style="display: none;">
             <div class="vietnamese-word" id="target-vn">Đang tải...</div>
             <div id="target-en-hint" style="font-size: 13px; color: var(--primary-color); margin-bottom: 10px; font-weight: bold; display: none;">Từ mục tiêu bắt buộc: <span id="current-en-word"></span></div>
             
-            <!-- Giao diện Chế độ Trắc Nghiệm -->
             <div id="choice-container" class="options" style="display: none;"></div>
 
-            <!-- Giao diện Chế độ Xếp Lại Từ (Scramble) -->
             <div id="scramble-container" style="display: none;">
                 <div class="scramble-slots" id="scramble-slots"></div>
                 <div class="scramble-letters" id="scramble-letters"></div>
                 <div style="display: flex; gap: 10px; margin-top: 10px;">
-                    <button onclick="resetScrambleInput()" style="flex:1; padding:8px; background:var(--error-color); color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">Xóa lại 🔄</button>
-                    <button onclick="checkScrambleAnswer()" style="flex:1; padding:8px; background:var(--success-color); color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">Kiểm tra ✅</button>
+                    <button id="btn-reset-scramble" style="flex:1; padding:8px; background:var(--error-color); color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">Xóa lại 🔄</button>
+                    <button id="btn-check-scramble" style="flex:1; padding:8px; background:var(--success-color); color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">Kiểm tra ✅</button>
                 </div>
             </div>
 
-            <!-- Giao diện Chế độ Tự Gõ (có câu mẫu gợi ý sẵn) -->
             <div id="type-container" style="display: none;">
                 <div id="type-example-hint" style="font-size: 13px; background: var(--sync-bg); padding: 8px; border-radius: 6px; margin-bottom: 10px; text-align: left; border: 1px dashed var(--primary-color);">
                     💡 <strong>Câu mẫu gợi ý:</strong> <span id="type-sample-sentence" style="font-style: italic;">Đang tải...</span>
                 </div>
-                <input type="text" id="user-input" placeholder="Type in English..." onkeypress="handleKeyPress(event)" autocomplete="off">
-                <button onclick="checkTypeAnswer()" style="width:100%; padding:10px; background:var(--primary-color); color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">Kiểm tra</button>
+                <input type="text" id="user-input" placeholder="Type in English..." autocomplete="off">
+                <button id="btn-check-type" style="width:100%; padding:10px; background:var(--primary-color); color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">Kiểm tra</button>
             </div>
 
-            <!-- Giao diện Chế độ Tự Đặt Câu tích hợp LanguageTool API -->
             <div id="sentence-container" style="display: none; text-align: left;">
-                <p style="font-size: 13px; margin-bottom: 6px;">Tự viết câu tiếng Anh chứa từ mục tiêu. Hệ thống sẽ check ngữ pháp chi tiết:</p>
+                <p style="font-size: 13px; margin-bottom: 6px;">Tự viết câu tiếng Anh chứa từ mục tiêu:</p>
                 <textarea id="user-sentence" rows="3" placeholder="Ví dụ: I have great confidence in my skills..."></textarea>
-                <button id="btn-check-grammar" onclick="checkUserSentenceWithAPI()" style="width:100%; padding:10px; background:var(--primary-color); color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">🔍 Kiểm tra Ngữ Pháp Chuyên Sâu</button>
+                <div style="display: flex; gap: 8px;">
+                    <button id="btn-check-grammar" style="flex:1; padding:10px; background:var(--primary-color); color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">🔍 Kiểm tra tại chỗ</button>
+                    <button id="btn-check-ai" style="flex:1; padding:10px; background:#6f42c1; color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer; display:none;">✨ Nhờ AI chấm (OpenRouter)</button>
+                </div>
             </div>
 
             <div class="result" id="result-message"></div>
             
-            <!-- Khung hiển thị câu ví dụ hoàn chỉnh khi trả lời đúng -->
             <div id="example-box" class="example-box">
-                💡 <strong>Câu ví dụ:</strong> <span id="example-text"></span>
+                💡 <strong>Câu ví dụ mẫu:</strong> <span id="example-text"></span>
             </div>
         </div>
 
@@ -281,663 +270,928 @@
             <div id="game-over-screen" class="game-over-screen" style="display: none;">
                 <h2>GAME OVER!</h2>
                 <p>Điểm của bạn: <span id="final-score">0</span></p>
-                <button onclick="startRocketGame()">Chơi lại 🔄</button>
+                <button id="btn-restart-rocket">Chơi lại 🔄</button>
             </div>
         </div>
         
         <div id="rocket-input-container" style="display: block; margin-top: 10px;">
-            <input type="text" id="rocket-input" placeholder="Gõ từ tiếng Anh đang rơi..." oninput="checkRocketInput()" autocomplete="off">
+            <input type="text" id="rocket-input" placeholder="Gõ từ tiếng Anh đang rơi..." autocomplete="off">
         </div>
 
         <div class="playlist-section">
             <h2>🎧 Nghe Từ Vựng Tự Động</h2>
             <div id="playlist-status" style="text-align: center; font-size: 14px; font-weight: bold; margin-bottom: 10px; color: var(--primary-color);">Trạng thái: Đang dừng</div>
             <div class="playlist-controls">
-                <button id="btn-start-playlist" onclick="startPlaylist()" style="background: var(--success-color); border:none; color:#fff; padding:10px; border-radius:8px; cursor:pointer; flex:1; font-weight:bold;">▶️ Bắt đầu Nghe</button>
-                <button id="btn-stop-playlist" onclick="stopPlaylist()" style="background: var(--error-color); border:none; color:#fff; padding:10px; border-radius:8px; cursor:pointer; flex:1; font-weight:bold;">⏹️ Dừng lại</button>
+                <button id="btn-start-playlist" style="background: var(--success-color); border:none; color:#fff; padding:10px; border-radius:8px; cursor:pointer; flex:1; font-weight:bold;">▶️ Bắt đầu Nghe</button>
+                <button id="btn-stop-playlist" style="background: var(--error-color); border:none; color:#fff; padding:10px; border-radius:8px; cursor:pointer; flex:1; font-weight:bold;">⏹️ Dừng lại</button>
             </div>
         </div>
 
-        <h2>➕ Thêm Từ Mới</h2>
+        <h2>➕ Thêm Từ Mới & Chủ Đề Mới</h2>
         <div class="add-form">
-            <input type="text" id="new-en" placeholder="English (e.g. Zero)">
-            <input type="text" id="new-vn" placeholder="Nghĩa Việt (e.g. Số không)">
-            <select id="new-cat" class="form-select" style="grid-column: span 2;">
-                <option value="numbers">🔢 Số đếm & Toán học</option>
-                <option value="shapes">🔷 Hình khối & Không gian</option>
-                <option value="emotions">🧠 Cảm xúc & tâm lý</option>
-                <option value="personality">🧩 Tính cách & phẩm chất</option>
-                <option value="relationships">👥 Quan hệ xã hội</option>
-                <option value="economics">📉 Kinh tế, tài chính</option>
-                <option value="occupations">👨‍⚕️ Nghề nghiệp</option>
-                <option value="law">⚖️ Pháp luật</option>
-                <option value="clothing">👕 Trang phục</option>
-                <option value="animals_nature">🦁 Động vật & thiên nhiên</option>
-                <option value="objects_arch">🏗️ Đồ vật & kiến trúc</option>
-                <option value="actions">🛠️ Hành động</option>
-                <option value="abstract" selected>📚 Khái niệm trừu tượng</option>
-            </select>
-            <button onclick="addWord()" style="grid-column: span 2; padding:10px; background:var(--primary-color); border:none; color:#fff; font-weight:bold; border-radius:8px; cursor:pointer;">Thêm Từ</button>
+            <input type="text" id="new-en" placeholder="English (e.g. Apple)">
+            <input type="text" id="new-vn" placeholder="Nghĩa Việt (e.g. Quả táo)">
+            
+            <div style="grid-column: span 2; display: flex; gap: 6px;">
+                <select id="new-cat" class="form-select" style="flex: 1; margin-bottom: 0;"></select>
+                <button id="btn-add-category-prompt" type="button" style="padding: 0 12px; background: #17a2b8; border: none; color: #fff; font-weight: bold; border-radius: 8px; cursor: pointer; white-space: nowrap;" title="Tạo chủ đề mới">➕ Tạo</button>
+                <button id="btn-delete-category-prompt" type="button" style="padding: 0 12px; background: var(--error-color); border: none; color: #fff; font-weight: bold; border-radius: 8px; cursor: pointer; white-space: nowrap;" title="Xóa chủ đề đang chọn">🗑️ Xóa chủ đề</button>
+            </div>
+
+            <button id="btn-add-word" style="grid-column: span 2; margin-top: 5px; padding:10px; background:var(--primary-color); border:none; color:#fff; font-weight:bold; border-radius:8px; cursor:pointer;">Thêm Từ Vựng</button>
         </div>
 
         <h2>📖 Danh Sách Từ (<span id="word-count">0</span>)</h2>
         <div class="word-list" id="word-list"></div>
 
         <div class="sync-tools">
-            <button onclick="exportData()">📥 Xuất dữ liệu</button>
-            <button onclick="document.getElementById('import-file').click()">📤 Nhập dữ liệu</button>
-            <input type="file" id="import-file" style="display: none;" accept=".json" onchange="importData(event)">
+            <button id="btn-export">📥 Xuất dữ liệu</button>
+            <button id="btn-import-trigger">📤 Nhập dữ liệu</button>
+            <input type="file" id="import-file" style="display: none;" accept=".json">
         </div>
     </div>
 
     <script>
-        function enterGame() {
-            document.getElementById('welcome-screen').style.opacity = '0';
-            setTimeout(() => { document.getElementById('welcome-screen').style.display = 'none'; }, 500);
-        }
+        (function() {
+            document.addEventListener('DOMContentLoaded', () => {
+                const initDefaultWords = [
+                    { en: "Zero", vn: "Số không", cat: "numbers", date: "2026-08-18", example: "He scored zero in the test." },
+                    { en: "One", vn: "Số một", cat: "numbers", date: "2026-08-18", example: "Give me one good reason." },
+                    { en: "Circle", vn: "Hình tròn", cat: "shapes", date: "2026-08-18", example: "Draw a perfect circle on the paper." },
+                    { en: "Anxiety", vn: "Sự lo âu", cat: "emotions", date: "2026-08-18", example: "She felt a deep sense of anxiety before the interview." },
+                    { en: "Confidence", vn: "Sự tự tin", cat: "personality", date: "2026-08-18", example: "He has great confidence in his speaking skills." }
+                ];
 
-        let defaultWords = [
-            { en: "Zero", vn: "Số không", cat: "numbers", date: "2026-08-18", example: "He scored zero in the test." },
-            { en: "One", vn: "Số một", cat: "numbers", date: "2026-08-18", example: "Give me one good reason." },
-            { en: "Circle", vn: "Hình tròn", cat: "shapes", date: "2026-08-18", example: "Draw a perfect circle on the paper." },
-            { en: "Anxiety", vn: "Sự lo âu", cat: "emotions", date: "2026-08-18", example: "She felt a deep sense of anxiety before the interview." },
-            { en: "Confidence", vn: "Sự tự tin", cat: "personality", date: "2026-08-18", example: "He has great confidence in his speaking skills." },
-            { en: "Doctor", vn: "Bác sĩ", cat: "occupations", date: "2026-08-18", example: "You should see a doctor if symptoms persist." },
-            { en: "Inflation", vn: "Lạm phát", cat: "economics", date: "2026-08-18", example: "Inflation rates have increased this year." }
-        ];
+                const baseCategoryNames = {
+                    "numbers": "🔢 Số đếm & Toán học",
+                    "shapes": "🔷 Hình khối & Không gian",
+                    "emotions": "🧠 Cảm xúc & tâm lý",
+                    "personality": "🧩 Tính cách & phẩm chất",
+                    "relationships": "👥 Quan hệ xã hội",
+                    "economics": "📉 Kinh tế, tài chính",
+                    "occupations": "👨‍⚕️ Nghề nghiệp",
+                    "law": "⚖️ Pháp luật",
+                    "clothing": "👕 Trang phục",
+                    "animals_nature": "🦁 Động vật & thiên nhiên",
+                    "objects_arch": "🏗️ Đồ vật & kiến trúc",
+                    "actions": "🛠️ Hành động",
+                    "abstract": "📚 Khái niệm trừu tượng"
+                };
 
-        let words = JSON.parse(localStorage.getItem('my_vocab_game_v106')) || defaultWords;
-        let wrongWords = [];
-        let selectedCategory = 'all';
-        let selectedDate = 'all';
-        let currentMode = 'rocket'; // Mặc định vào game đầu tiên là tên lửa
-        let currentWordIndex = -1;
-
-        // Biến dành riêng cho chế độ Xếp Lại Từ
-        let scrambleTargetWord = "";
-        let currentScrambleLetters = [];
-        let userChosenLetters = [];
-
-        function getLevenshteinDistance(a, b) {
-            const matrix = [];
-            for (let i = 0; i <= b.length; i++) matrix[i] = [i];
-            for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
-
-            for (let i = 1; i <= b.length; i++) {
-                for (let j = 1; j <= a.length; j++) {
-                    if (b.charAt(i - 1) === a.charAt(j - 1)) {
-                        matrix[i][j] = matrix[i - 1][j - 1];
-                    } else {
-                        matrix[i][j] = Math.min(matrix[i - 1][j - 1] + 1, Math.min(matrix[i][j - 1] + 1, matrix[i - 1][j] + 1));
-                    }
-                }
-            }
-            return matrix[b.length][a.length];
-        }
-
-        function setupScrambleGame(wordObj) {
-            scrambleTargetWord = wordObj.en;
-            userChosenLetters = [];
-            const cleanWord = scrambleTargetWord.replace(/[^a-zA-Z]/g, '');
-            let letters = cleanWord.split('');
-            for (let i = letters.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [letters[i], letters[j]] = [letters[j], letters[i]];
-            }
-            currentScrambleLetters = letters.map((l, idx) => ({ char: l, id: idx, used: false }));
-            renderScrambleBoard();
-        }
-
-        function renderScrambleBoard() {
-            const slotsContainer = document.getElementById('scramble-slots');
-            const lettersContainer = document.getElementById('scramble-letters');
-            slotsContainer.innerHTML = '';
-            lettersContainer.innerHTML = '';
-
-            const cleanWord = scrambleTargetWord.replace(/[^a-zA-Z]/g, '');
-
-            for (let i = 0; i < cleanWord.length; i++) {
-                const slot = document.createElement('div');
-                slot.className = 'scramble-slot';
-                if (userChosenLetters[i]) {
-                    slot.innerText = userChosenLetters[i].char;
-                    slot.style.borderColor = 'var(--success-color)';
-                }
-                slotsContainer.appendChild(slot);
-            }
-
-            currentScrambleLetters.forEach((item, index) => {
-                const btn = document.createElement('button');
-                btn.className = 'letter-btn';
-                btn.innerText = item.char;
-                if (item.used) {
-                    btn.style.opacity = '0.3';
-                    btn.style.cursor = 'not-allowed';
-                    btn.disabled = true;
-                } else {
-                    btn.onclick = () => chooseLetter(index);
-                }
-                lettersContainer.appendChild(btn);
-            });
-        }
-
-        function chooseLetter(index) {
-            const cleanWord = scrambleTargetWord.replace(/[^a-zA-Z]/g, '');
-            if (userChosenLetters.length < cleanWord.length) {
-                currentScrambleLetters[index].used = true;
-                userChosenLetters.push(currentScrambleLetters[index]);
-                renderScrambleBoard();
-                if (userChosenLetters.length === cleanWord.length) {
-                    checkScrambleAnswer();
-                }
-            }
-        }
-
-        function resetScrambleInput() {
-            currentScrambleLetters.forEach(item => item.used = false);
-            userChosenLetters = [];
-            renderScrambleBoard();
-            document.getElementById('result-message').innerText = '';
-        }
-
-        function checkScrambleAnswer() {
-            const cleanWord = scrambleTargetWord.replace(/[^a-zA-Z]/g, '');
-            const userWord = userChosenLetters.map(i => i.char).join('');
-            const resultDiv = document.getElementById('result-message');
-            const exampleBox = document.getElementById('example-box');
-            const currentPool = getFilteredWords();
-            const correctWordObj = window.activeCurrentWord || currentPool[currentWordIndex];
-
-            if (userWord.toLowerCase() === cleanWord.toLowerCase()) {
-                resultDiv.className = "result success";
-                resultDiv.innerText = `Chính xác! 🔊 (${scrambleTargetWord})`;
-                
-                if (correctWordObj.example) {
-                    document.getElementById('example-text').innerText = correctWordObj.example;
-                    exampleBox.style.display = 'block';
+                let words = [];
+                try {
+                    const saved = localStorage.getItem('my_vocab_game_v110');
+                    words = saved ? JSON.parse(saved) : initDefaultWords;
+                } catch(e) {
+                    words = initDefaultWords;
                 }
 
-                speakWord(scrambleTargetWord, true);
-                wrongWords = wrongWords.filter(w => w.en !== scrambleTargetWord);
-                setTimeout(nextQuestion, 4000);
-            } else if (userChosenLetters.length === cleanWord.length) {
-                resultDiv.className = "result error";
-                resultDiv.innerText = `Sai rồi! Đáp án đúng là: ${scrambleTargetWord}`;
-                exampleBox.style.display = 'none';
-                speakWord(scrambleTargetWord, true);
-                if (!wrongWords.some(w => w.en === scrambleTargetWord)) wrongWords.push(correctWordObj);
-            }
-        }
+                let customCategoryNames = {};
+                try {
+                    const savedCats = localStorage.getItem('my_vocab_custom_categories');
+                    customCategoryNames = savedCats ? JSON.parse(savedCats) : {};
+                } catch(e) {
+                    customCategoryNames = {};
+                }
 
-        async function checkUserSentenceWithAPI() {
-            const currentPool = getFilteredWords();
-            if (currentWordIndex === -1 || currentPool.length === 0) return;
-            const userSentenceText = document.getElementById('user-sentence').value.trim();
-            const correctWordObj = window.activeCurrentWord || currentPool[currentWordIndex];
-            const targetWord = correctWordObj.en;
-            const resultDiv = document.getElementById('result-message');
-            const exampleBox = document.getElementById('example-box');
+                function getAllCategoriesMap() {
+                    return { ...baseCategoryNames, ...customCategoryNames };
+                }
 
-            if (!userSentenceText) {
-                resultDiv.className = "result error";
-                resultDiv.innerText = "⚠️ Vui lòng nhập vào một câu hoàn chỉnh.";
-                exampleBox.style.display = 'none';
-                return;
-            }
+                let wrongWords = [];
+                let selectedCategory = 'all';
+                let selectedDate = 'all';
+                let currentMode = 'rocket'; 
+                let currentWordIndex = -1;
 
-            const lowerTarget = targetWord.toLowerCase();
-            const wordsInSentence = userSentenceText.split(/\s+/).map(w => w.replace(/[^a-zA-Z]/g, '').toLowerCase());
-            
-            if (!wordsInSentence.includes(lowerTarget)) {
-                resultDiv.className = "result error";
-                resultDiv.innerHTML = `❌ Lỗi thiếu từ vựng: Câu của bạn chưa chứa từ mục tiêu yêu cầu là "<strong>${targetWord}</strong>".`;
-                exampleBox.style.display = 'none';
-                return;
-            }
+                let scrambleTargetWord = "";
+                let currentScrambleLetters = [];
+                let userChosenLetters = [];
 
-            resultDiv.className = "result";
-            resultDiv.innerText = "⏳ Đang kết nối kiểm tra ngữ pháp, giới từ, cấu trúc chủ-vị...";
-            exampleBox.style.display = 'none';
-
-            try {
-                const response = await fetch('https://api.languagetool.org/v2/check', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams({
-                        text: userSentenceText,
-                        language: 'en-US'
-                    })
+                document.getElementById('btn-start-screen').addEventListener('click', () => {
+                    const welcome = document.getElementById('welcome-screen');
+                    welcome.style.opacity = '0';
+                    setTimeout(() => { welcome.style.display = 'none'; }, 500);
                 });
 
-                const data = await response.json();
-                let matches = data.matches || [];
+                const modal = document.getElementById('settings-modal');
+                document.getElementById('btn-open-settings').addEventListener('click', () => {
+                    document.getElementById('api-key-input').value = localStorage.getItem('my_openrouter_api_key') || '';
+                    modal.style.display = 'flex';
+                });
 
-                if (matches.length === 0) {
-                    resultDiv.className = "result success";
-                    resultDiv.innerHTML = `✅ Tuyệt vời! Câu hoàn toàn chuẩn ngữ pháp, giới từ và cấu trúc chủ-vị.`;
-                    
-                    if (correctWordObj.example) {
-                        document.getElementById('example-text').innerText = correctWordObj.example;
-                        exampleBox.style.display = 'block';
+                document.getElementById('btn-close-key').addEventListener('click', () => {
+                    modal.style.display = 'none';
+                    checkAIKeyStatus();
+                });
+
+                document.getElementById('btn-save-key').addEventListener('click', () => {
+                    const key = document.getElementById('api-key-input').value.trim();
+                    localStorage.setItem('my_openrouter_api_key', key);
+                    alert('Đã lưu OpenRouter API Key thành công!');
+                    modal.style.display = 'none';
+                    checkAIKeyStatus();
+                });
+
+                function checkAIKeyStatus() {
+                    const key = localStorage.getItem('my_openrouter_api_key');
+                    const aiBtn = document.getElementById('btn-check-ai');
+                    if (aiBtn) {
+                        aiBtn.style.display = (key && key.startsWith('sk-or-')) ? 'block' : 'none';
                     }
+                }
 
-                    speakWord(targetWord, true);
-                    setTimeout(nextQuestion, 5000);
-                } else {
-                    let errorMessages = matches.map(m => {
-                        let suggestions = m.replacements.slice(0, 3).map(r => r.value).join(', ');
-                        let suggestionText = suggestions ? ` (Gợi ý thay thế: <b>${suggestions}</b>)` : '';
-                        return `• ${m.message}${suggestionText}`;
+                document.querySelectorAll('.theme-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const theme = btn.getAttribute('data-theme-val');
+                        if (theme === 'default') document.documentElement.removeAttribute('data-theme');
+                        else document.documentElement.setAttribute('data-theme', theme);
+                        document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        localStorage.setItem('my_vocab_theme', theme);
                     });
+                });
+                const savedTheme = localStorage.getItem('my_vocab_theme') || 'default';
+                if (savedTheme !== 'default') document.documentElement.setAttribute('data-theme', savedTheme);
+                document.querySelectorAll('.theme-btn').forEach(b => {
+                    if (b.getAttribute('data-theme-val') === savedTheme) b.classList.add('active');
+                    else b.classList.remove('active');
+                });
 
-                    resultDiv.className = "result error";
-                    resultDiv.innerHTML = `⚠️ Phát hiện lỗi ngữ pháp/giới từ/cấu trúc:<br>` + errorMessages.join('<br>');
-                    exampleBox.style.display = 'none';
+                function updateCategoryDropdowns() {
+                    const allCatsMap = getAllCategoriesMap();
+                    
+                    const filterSelect = document.getElementById('category-filter');
+                    if (filterSelect) {
+                        const currentVal = filterSelect.value;
+                        let html = '<option value="all">🌟 Tất cả chủ đề</option>';
+                        for (let key in allCatsMap) {
+                            html += `<option value="${key}">${allCatsMap[key]}</option>`;
+                        }
+                        filterSelect.innerHTML = html;
+                        filterSelect.value = allCatsMap[currentVal] ? currentVal : 'all';
+                    }
+
+                    const addSelect = document.getElementById('new-cat');
+                    if (addSelect) {
+                        const currentAddVal = addSelect.value;
+                        let html = '';
+                        for (let key in allCatsMap) {
+                            html += `<option value="${key}">${allCatsMap[key]}</option>`;
+                        }
+                        addSelect.innerHTML = html;
+                        addSelect.value = allCatsMap[currentAddVal] ? currentAddVal : Object.keys(allCatsMap)[0];
+                    }
                 }
 
-            } catch (err) {
-                resultDiv.className = "result error";
-                resultDiv.innerText = "⚠️ Không thể kết nối tới máy chủ kiểm tra ngữ pháp. Vui lòng kiểm tra lại mạng.";
-                exampleBox.style.display = 'none';
-            }
-        }
+                document.getElementById('btn-add-category-prompt').addEventListener('click', () => {
+                    let catName = prompt("Nhập tên hiển thị cho chủ đề mới (Ví dụ: ✈️ Du lịch):");
+                    if (!catName) return;
+                    catName = catName.trim();
+                    let catKey = "cat_" + Date.now();
+                    
+                    customCategoryNames[catKey] = catName;
+                    localStorage.setItem('my_vocab_custom_categories', JSON.stringify(customCategoryNames));
+                    
+                    updateCategoryDropdowns();
+                    document.getElementById('new-cat').value = catKey;
+                    alert(`Đã tạo thành công chủ đề "${catName}"!`);
+                });
 
-        function updateDateFilterOptions() {
-            const dateSelect = document.getElementById('date-filter');
-            const currentSelected = dateSelect.value;
-            const dates = [...new Set(words.map(w => w.date || 'N/A'))].sort().reverse();
-            let optionsHtml = '<option value="all">📅 Tất cả ngày</option>';
-            dates.forEach(d => { optionsHtml += `<option value="${d}">${d}</option>`; });
-            dateSelect.innerHTML = optionsHtml;
-            dateSelect.value = dates.includes(currentSelected) ? currentSelected : 'all';
-        }
+                document.getElementById('btn-delete-category-prompt').addEventListener('click', () => {
+                    const currentCatKey = document.getElementById('new-cat').value;
+                    const allCatsMap = getAllCategoriesMap();
+                    const catNameToDelete = allCatsMap[currentCatKey];
 
-        function getFilteredWords() {
-            return words.filter(w => {
-                const matchCat = (selectedCategory === 'all') || ((w.cat || 'abstract') === selectedCategory);
-                const matchDate = (selectedDate === 'all') || ((w.date || 'N/A') === selectedDate);
-                return matchCat && matchDate;
-            });
-        }
+                    if (Object.keys(allCatsMap).length <= 1) {
+                        alert("Bạn không thể xóa chủ đề cuối cùng còn lại!");
+                        return;
+                    }
 
-        function onFilterChange() {
-            selectedCategory = document.getElementById('category-filter').value;
-            selectedDate = document.getElementById('date-filter').value;
-            renderWordList();
-            if (currentMode === 'rocket') startRocketGame();
-            else nextQuestion();
-        }
+                    if (confirm(`Bạn có chắc chắn muốn xóa chủ đề "${catNameToDelete}"?\n(Các từ vựng thuộc chủ đề này sẽ được chuyển về chủ đề đầu tiên còn lại hoặc 'Khái niệm trừu tượng').`)) {
+                        // Tìm chủ đề thay thế nếu có
+                        const remainingKeys = Object.keys(allCatsMap).filter(k => k !== currentCatKey);
+                        const fallbackCat = remainingKeys.includes('abstract') ? 'abstract' : remainingKeys[0];
 
-        function setTheme(theme) {
-            if (theme === 'default') document.documentElement.removeAttribute('data-theme');
-            else document.documentElement.setAttribute('data-theme', theme);
-            document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
-            const indexMap = {'default': 0, 'dark': 1, 'purple': 2, 'green': 3, 'orange': 4};
-            if(document.querySelectorAll('.theme-btn')[indexMap[theme]]) document.querySelectorAll('.theme-btn')[indexMap[theme]].classList.add('active');
-            localStorage.setItem('my_vocab_theme', theme);
-        }
-        setTheme(localStorage.getItem('my_vocab_theme') || 'default');
+                        words.forEach(w => {
+                            if (w.cat === currentCatKey) {
+                                w.cat = fallbackCat;
+                            }
+                        });
 
-        function speakWord(text, isEnglish = true, callback = null) {
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = isEnglish ? 'en-US' : 'vi-VN';
-                utterance.rate = 0.9;
-                if (callback) utterance.onend = callback;
-                window.speechSynthesis.speak(utterance);
-            } else if (callback) callback();
-        }
+                        if (baseCategoryNames[currentCatKey]) {
+                            delete baseCategoryNames[currentCatKey];
+                        }
+                        if (customCategoryNames[currentCatKey]) {
+                            delete customCategoryNames[currentCatKey];
+                            localStorage.setItem('my_vocab_custom_categories', JSON.stringify(customCategoryNames));
+                        }
 
-        function saveWords() {
-            localStorage.setItem('my_vocab_game_v106', JSON.stringify(words));
-            updateDateFilterOptions();
-            renderWordList();
-        }
-
-        function renderWordList() {
-            const listContainer = document.getElementById('word-list');
-            const activeList = getFilteredWords();
-            document.getElementById('word-count').innerText = activeList.length;
-            listContainer.innerHTML = '';
-            
-            activeList.forEach((item) => {
-                const originalIndex = words.indexOf(item);
-                listContainer.innerHTML += `
-                    <div class="word-item">
-                        <span>
-                            <strong>${item.en}</strong>: ${item.vn}
-                            <span class="category-tag">${item.cat || 'abstract'}</span>
-                        </span>
-                        <button class="delete-btn" onclick="removeWord(${originalIndex})">Xóa</button>
-                    </div>
-                `;
-            });
-        }
-
-        function addWord() {
-            const en = document.getElementById('new-en').value.trim();
-            const vn = document.getElementById('new-vn').value.trim();
-            const cat = document.getElementById('new-cat').value;
-            const todayStr = new Date().toISOString().split('T')[0];
-
-            if (en && vn) {
-                if (words.some(w => w.en.toLowerCase() === en.toLowerCase())) {
-                    alert('Từ này đã có trong danh sách!'); return;
-                }
-                words.push({ en: en, vn: vn, cat: cat, date: todayStr, example: `This is an example sentence for ${en}.` });
-                saveWords();
-                document.getElementById('new-en').value = '';
-                document.getElementById('new-vn').value = '';
-                if (currentMode !== 'rocket') nextQuestion();
-            }
-        }
-
-        function removeWord(index) {
-            words.splice(index, 1);
-            saveWords();
-            if (currentMode !== 'rocket') nextQuestion();
-        }
-
-        function switchMode(mode) {
-            currentMode = mode;
-            document.getElementById('btn-rocket-mode').classList.toggle('active', mode === 'rocket');
-            document.getElementById('btn-choice-mode').classList.toggle('active', mode === 'choice');
-            document.getElementById('btn-scramble-mode').classList.toggle('active', mode === 'scramble');
-            document.getElementById('btn-type-mode').classList.toggle('active', mode === 'type');
-            document.getElementById('btn-sentence-mode').classList.toggle('active', mode === 'sentence');
-            
-            const card = document.getElementById('game-card');
-            const rocketCanvas = document.getElementById('game-canvas-container');
-            const rocketInput = document.getElementById('rocket-input-container');
-
-            if (mode === 'rocket') {
-                card.style.display = 'none';
-                rocketCanvas.style.display = 'block';
-                rocketInput.style.display = 'block';
-                startRocketGame();
-            } else {
-                stopRocketGame();
-                card.style.display = 'block';
-                rocketCanvas.style.display = 'none';
-                rocketInput.style.display = 'none';
-                
-                document.getElementById('choice-container').style.display = mode === 'choice' ? 'grid' : 'none';
-                document.getElementById('scramble-container').style.display = mode === 'scramble' ? 'block' : 'none';
-                document.getElementById('type-container').style.display = mode === 'type' ? 'block' : 'none';
-                document.getElementById('sentence-container').style.display = mode === 'sentence' ? 'block' : 'none';
-                document.getElementById('target-en-hint').style.display = mode === 'sentence' ? 'block' : 'none';
-                document.getElementById('type-example-hint').style.display = mode === 'type' ? 'block' : 'none';
-                
-                nextQuestion();
-            }
-        }
-
-        function nextQuestion() {
-            document.getElementById('result-message').innerText = '';
-            document.getElementById('example-box').style.display = 'none';
-            document.getElementById('user-input').value = '';
-            document.getElementById('user-sentence').value = '';
-            const currentPool = getFilteredWords();
-
-            if (currentPool.length === 0) {
-                document.getElementById('target-vn').innerText = "🎉 Không có từ vựng nào theo bộ lọc này!";
-                return;
-            }
-
-            let currentWord;
-            if (wrongWords.length > 0 && Math.random() < 0.7) {
-                const wrongIndex = Math.floor(Math.random() * wrongWords.length);
-                currentWord = wrongWords[wrongIndex];
-                currentWordIndex = currentPool.indexOf(currentWord);
-            } else {
-                let newIndex;
-                if (currentPool.length === 1) newIndex = 0;
-                else {
-                    do {
-                        newIndex = Math.floor(Math.random() * currentPool.length);
-                    } while (newIndex === currentWordIndex && currentPool.length > 1);
-                }
-                currentWordIndex = newIndex;
-                currentWord = currentPool[currentWordIndex];
-            }
-
-            document.getElementById('target-vn').innerText = currentWord.vn;
-            document.getElementById('current-en-word').innerText = currentWord.en;
-            
-            // Cung cấp câu mẫu dạng đục lỗ hoặc ẩn từ cần gõ để gợi ý cho chế độ Tự Gõ
-            if (currentMode === 'type') {
-                let sampleSentence = currentWord.example || `This is an example sentence containing ${currentWord.en}.`;
-                // Ẩn từ gốc trong câu mẫu bằng dấu gạch ngang tương ứng
-                let maskedSentence = sampleSentence.replace(new RegExp(currentWord.en, 'gi'), '____');
-                document.getElementById('type-sample-sentence').innerText = maskedSentence;
-            }
-
-            if (currentMode === 'scramble') {
-                setupScrambleGame(currentWord);
-            } else if (currentMode === 'choice') {
-                setupChoiceOptions(currentWord, currentPool);
-            }
-            
-            window.activeCurrentWord = currentWord;
-        }
-
-        function checkTypeAnswer() {
-            const currentPool = getFilteredWords();
-            if (currentWordIndex === -1 || currentPool.length === 0) return;
-            const input = document.getElementById('user-input').value.trim();
-            const correctWordObj = window.activeCurrentWord || currentPool[currentWordIndex];
-            const correct = correctWordObj.en;
-            const resultDiv = document.getElementById('result-message');
-            const exampleBox = document.getElementById('example-box');
-
-            if (input.toLowerCase() === correct.toLowerCase()) {
-                resultDiv.className = "result success";
-                resultDiv.innerText = `Chính xác! 🔊 (${correct})`;
-                
-                if (correctWordObj.example) {
-                    document.getElementById('example-text').innerText = correctWordObj.example;
-                    exampleBox.style.display = 'block';
-                }
-
-                speakWord(correct, true);
-                wrongWords = wrongWords.filter(w => w.en !== correct);
-                setTimeout(nextQuestion, 4000);
-            } else {
-                resultDiv.className = "result error";
-                exampleBox.style.display = 'none';
-                let suggestionMsg = "";
-                const cleanInput = input.toLowerCase();
-                words.forEach(w => {
-                    if (getLevenshteinDistance(cleanInput, w.en.toLowerCase()) <= 2) {
-                        suggestionMsg = ` (Ý bạn là "${w.en}"?)`;
+                        saveWords();
+                        selectedCategory = 'all';
+                        updateCategoryDropdowns();
+                        onFilterChange();
+                        alert(`Đã xóa thành công chủ đề "${catNameToDelete}"!`);
                     }
                 });
-                resultDiv.innerText = `Sai rồi! Đáp án là: ${correct}${suggestionMsg}`;
-                speakWord(correct, true);
-                if (!wrongWords.some(w => w.en === correct)) wrongWords.push(correctWordObj);
-            }
-        }
 
-        function handleKeyPress(e) { if (e.key === 'Enter') checkTypeAnswer(); }
+                document.getElementById('category-filter').addEventListener('change', (e) => {
+                    selectedCategory = e.target.value;
+                    onFilterChange();
+                });
 
-        function setupChoiceOptions(correctWord, currentPool) {
-            const container = document.getElementById('choice-container');
-            container.innerHTML = '';
-            let options = [correctWord.en];
-            let poolSource = currentPool.length >= 4 ? currentPool : words;
-            let otherWords = poolSource.filter(w => w.en !== correctWord.en).sort(() => 0.5 - Math.random());
-            for (let i = 0; i < Math.min(3, otherWords.length); i++) options.push(otherWords[i].en);
-            options.sort(() => 0.5 - Math.random());
+                document.getElementById('date-filter').addEventListener('change', (e) => {
+                    selectedDate = e.target.value;
+                    onFilterChange();
+                });
 
-            options.forEach(opt => {
-                const btn = document.createElement('button');
-                btn.innerText = opt;
-                btn.onclick = () => {
-                    const correctWordObj = window.activeCurrentWord;
+                document.querySelectorAll('.mode-select button').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const mode = btn.getAttribute('data-mode');
+                        switchMode(mode);
+                    });
+                });
+
+                function switchMode(mode) {
+                    currentMode = mode;
+                    document.querySelectorAll('.mode-select button').forEach(b => b.classList.remove('active'));
+                    const activeBtn = document.querySelector(`[data-mode="${mode}"]`);
+                    if (activeBtn) activeBtn.classList.add('active');
+                    
+                    const card = document.getElementById('game-card');
+                    const rocketCanvas = document.getElementById('game-canvas-container');
+                    const rocketInput = document.getElementById('rocket-input-container');
+
+                    if (mode === 'rocket') {
+                        card.style.display = 'none';
+                        rocketCanvas.style.display = 'block';
+                        rocketInput.style.display = 'block';
+                        startRocketGame();
+                    } else {
+                        stopRocketGame();
+                        card.style.display = 'block';
+                        rocketCanvas.style.display = 'none';
+                        rocketInput.style.display = 'none';
+                        
+                        document.getElementById('choice-container').style.display = mode === 'choice' ? 'grid' : 'none';
+                        document.getElementById('scramble-container').style.display = mode === 'scramble' ? 'block' : 'none';
+                        document.getElementById('type-container').style.display = mode === 'type' ? 'block' : 'none';
+                        document.getElementById('sentence-container').style.display = mode === 'sentence' ? 'block' : 'none';
+                        document.getElementById('target-en-hint').style.display = mode === 'sentence' ? 'block' : 'none';
+                        document.getElementById('type-example-hint').style.display = mode === 'type' ? 'block' : 'none';
+                        
+                        if (mode === 'sentence') {
+                            checkAIKeyStatus();
+                        }
+
+                        nextQuestion();
+                    }
+                }
+
+                function getFilteredWords() {
+                    return words.filter(w => {
+                        const matchCat = (selectedCategory === 'all') || ((w.cat || 'abstract') === selectedCategory);
+                        const matchDate = (selectedDate === 'all') || ((w.date || 'N/A') === selectedDate);
+                        return matchCat && matchDate;
+                    });
+                }
+
+                function onFilterChange() {
+                    renderWordList();
+                    if (currentMode === 'rocket') startRocketGame();
+                    else nextQuestion();
+                }
+
+                function updateDateFilterOptions() {
+                    const dateSelect = document.getElementById('date-filter');
+                    if(!dateSelect) return;
+                    const currentSelected = dateSelect.value;
+                    const dates = [...new Set(words.map(w => w.date || 'N/A'))].sort().reverse();
+                    let optionsHtml = '<option value="all">📅 Tất cả ngày</option>';
+                    dates.forEach(d => { optionsHtml += `<option value="${d}">${d}</option>`; });
+                    dateSelect.innerHTML = optionsHtml;
+                    dateSelect.value = dates.includes(currentSelected) ? currentSelected : 'all';
+                }
+
+                function saveWords() {
+                    localStorage.setItem('my_vocab_game_v110', JSON.stringify(words));
+                    updateDateFilterOptions();
+                    renderWordList();
+                }
+
+                function renderWordList() {
+                    const listContainer = document.getElementById('word-list');
+                    if(!listContainer) return;
+                    const activeList = getFilteredWords();
+                    document.getElementById('word-count').innerText = activeList.length;
+                    listContainer.innerHTML = '';
+                    
+                    const allCatsMap = getAllCategoriesMap();
+
+                    activeList.forEach((item) => {
+                        const originalIndex = words.indexOf(item);
+                        const catKey = item.cat || 'abstract';
+                        const catDisplayName = allCatsMap[catKey] || catKey;
+
+                        const div = document.createElement('div');
+                        div.className = 'word-item';
+                        div.innerHTML = `
+                            <span>
+                                <strong>${item.en}</strong>: ${item.vn}
+                                <span class="category-tag">${catDisplayName}</span>
+                            </span>
+                        `;
+                        const delBtn = document.createElement('button');
+                        delBtn.className = 'delete-btn';
+                        delBtn.innerText = 'Xóa';
+                        delBtn.addEventListener('click', () => {
+                            words.splice(originalIndex, 1);
+                            saveWords();
+                            if (currentMode !== 'rocket') nextQuestion();
+                        });
+                        div.appendChild(delBtn);
+                        listContainer.appendChild(div);
+                    });
+                }
+
+                function speakWord(text, isEnglish = true, callback = null) {
+                    if ('speechSynthesis' in window) {
+                        window.speechSynthesis.cancel();
+                        const utterance = new SpeechSynthesisUtterance(text);
+                        utterance.lang = isEnglish ? 'en-US' : 'vi-VN';
+                        utterance.rate = 0.9;
+                        if (callback) utterance.onend = callback;
+                        window.speechSynthesis.speak(utterance);
+                    } else if (callback) callback();
+                }
+
+                document.getElementById('btn-add-word').addEventListener('click', () => {
+                    const en = document.getElementById('new-en').value.trim();
+                    const vn = document.getElementById('new-vn').value.trim();
+                    const cat = document.getElementById('new-cat').value;
+                    const todayStr = new Date().toISOString().split('T')[0];
+
+                    if (en && vn) {
+                        if (words.some(w => w.en.toLowerCase() === en.toLowerCase())) {
+                            alert('Từ này đã có trong danh sách!'); return;
+                        }
+                        words.push({ en: en, vn: vn, cat: cat, date: todayStr, example: `This is an example sentence for ${en}.` });
+                        saveWords();
+                        document.getElementById('new-en').value = '';
+                        document.getElementById('new-vn').value = '';
+                        if (currentMode !== 'rocket') nextQuestion();
+                    } else {
+                        alert('Vui lòng nhập đầy đủ từ tiếng Anh và nghĩa tiếng Việt!');
+                    }
+                });
+
+                function setupScrambleGame(wordObj) {
+                    scrambleTargetWord = wordObj.en;
+                    userChosenLetters = [];
+                    const cleanWord = scrambleTargetWord.replace(/[^a-zA-Z]/g, '');
+                    let letters = cleanWord.split('');
+                    for (let i = letters.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [letters[i], letters[j]] = [letters[j], letters[i]];
+                    }
+                    currentScrambleLetters = letters.map((l, idx) => ({ char: l, id: idx, used: false }));
+                    renderScrambleBoard();
+                }
+
+                function renderScrambleBoard() {
+                    const slotsContainer = document.getElementById('scramble-slots');
+                    const lettersContainer = document.getElementById('scramble-letters');
+                    if(!slotsContainer || !lettersContainer) return;
+                    slotsContainer.innerHTML = '';
+                    lettersContainer.innerHTML = '';
+
+                    const cleanWord = scrambleTargetWord.replace(/[^a-zA-Z]/g, '');
+
+                    for (let i = 0; i < cleanWord.length; i++) {
+                        const slot = document.createElement('div');
+                        slot.className = 'scramble-slot';
+                        if (userChosenLetters[i]) {
+                            slot.innerText = userChosenLetters[i].char;
+                            slot.style.borderColor = 'var(--success-color)';
+                        }
+                        slotsContainer.appendChild(slot);
+                    }
+
+                    currentScrambleLetters.forEach((item, index) => {
+                        const btn = document.createElement('button');
+                        btn.className = 'letter-btn';
+                        btn.innerText = item.char;
+                        if (item.used) {
+                            btn.style.opacity = '0.3';
+                            btn.style.cursor = 'not-allowed';
+                            btn.disabled = true;
+                        } else {
+                            btn.addEventListener('click', () => {
+                                const cleanW = scrambleTargetWord.replace(/[^a-zA-Z]/g, '');
+                                if (userChosenLetters.length < cleanW.length) {
+                                    currentScrambleLetters[index].used = true;
+                                    userChosenLetters.push(currentScrambleLetters[index]);
+                                    renderScrambleBoard();
+                                    if (userChosenLetters.length === cleanW.length) {
+                                        checkScrambleAnswer();
+                                    }
+                                }
+                            });
+                        }
+                        lettersContainer.appendChild(btn);
+                    });
+                }
+
+                document.getElementById('btn-reset-scramble').addEventListener('click', () => {
+                    currentScrambleLetters.forEach(item => item.used = false);
+                    userChosenLetters = [];
+                    renderScrambleBoard();
+                    document.getElementById('result-message').innerText = '';
+                });
+
+                document.getElementById('btn-check-scramble').addEventListener('click', checkScrambleAnswer);
+
+                function checkScrambleAnswer() {
+                    const cleanWord = scrambleTargetWord.replace(/[^a-zA-Z]/g, '');
+                    const userWord = userChosenLetters.map(i => i.char).join('');
+                    const resultDiv = document.getElementById('result-message');
                     const exampleBox = document.getElementById('example-box');
-                    if (opt === correctWordObj.en) {
-                        document.getElementById('result-message').className = "result success";
-                        document.getElementById('result-message').innerText = "Chính xác! 🔊";
+                    const currentPool = getFilteredWords();
+                    const correctWordObj = window.activeCurrentWord || currentPool[currentWordIndex];
+
+                    if (userWord.toLowerCase() === cleanWord.toLowerCase()) {
+                        resultDiv.className = "result success";
+                        resultDiv.innerText = `Chính xác! 🔊 (${scrambleTargetWord})`;
                         
                         if (correctWordObj.example) {
                             document.getElementById('example-text').innerText = correctWordObj.example;
                             exampleBox.style.display = 'block';
                         }
 
-                        speakWord(correctWordObj.en);
-                        setTimeout(nextQuestion, 3500);
-                    } else {
-                        document.getElementById('result-message').className = "result error";
-                        document.getElementById('result-message').innerText = `Sai rồi! Là: ${correctWordObj.en}`;
+                        speakWord(scrambleTargetWord, true);
+                        wrongWords = wrongWords.filter(w => w.en !== scrambleTargetWord);
+                        setTimeout(nextQuestion, 4000);
+                    } else if (userChosenLetters.length === cleanWord.length) {
+                        resultDiv.className = "result error";
+                        resultDiv.innerText = `Sai rồi! Đáp án đúng là: ${scrambleTargetWord}`;
                         exampleBox.style.display = 'none';
-                        speakWord(correctWordObj.en);
-                        if (!wrongWords.some(w => w.en === correctWordObj.en)) wrongWords.push(correctWordObj);
-                        setTimeout(nextQuestion, 2000);
+                        speakWord(scrambleTargetWord, true);
+                        if (!wrongWords.some(w => w.en === scrambleTargetWord)) wrongWords.push(correctWordObj);
                     }
-                };
-                container.appendChild(btn);
-            });
-        }
-
-        let rocketScore = 0;
-        let activeFallingWords = [];
-        let gameInterval = null;
-        let spawnInterval = null;
-        let isGameOver = false;
-
-        function startRocketGame() {
-            stopRocketGame();
-            const currentPool = getFilteredWords();
-            if (currentPool.length === 0) { alert('Không có từ vựng nào!'); return; }
-            rocketScore = 0; isGameOver = false; activeFallingWords = [];
-            document.getElementById('rocket-score').innerText = '0';
-            document.getElementById('words-area').innerHTML = '';
-            document.getElementById('game-over-screen').style.display = 'none';
-            document.getElementById('rocket-input').value = '';
-            document.getElementById('rocket-input').focus();
-
-            gameInterval = setInterval(updateRocketGame, 50);
-            spawnInterval = setInterval(spawnFallingWord, 4500);
-            spawnFallingWord();
-        }
-
-        function stopRocketGame() { clearInterval(gameInterval); clearInterval(spawnInterval); }
-
-        function spawnFallingWord() {
-            if (isGameOver) return;
-            const currentPool = getFilteredWords();
-            if (currentPool.length === 0) return;
-            const randomWord = currentPool[Math.floor(Math.random() * currentPool.length)];
-
-            const wordEl = document.createElement('div');
-            wordEl.className = 'falling-word';
-            wordEl.innerHTML = `${randomWord.en} <span>(${randomWord.vn})</span>`;
-            
-            const containerWidth = document.getElementById('game-canvas-container').clientWidth - 140;
-            const randomX = Math.max(10, Math.floor(Math.random() * containerWidth));
-            wordEl.style.left = randomX + 'px';
-            wordEl.style.top = '0px';
-            document.getElementById('words-area').appendChild(wordEl);
-
-            activeFallingWords.push({ element: wordEl, wordData: randomWord, y: 0, speed: 0.35 + (rocketScore * 0.02) });
-        }
-
-        function updateRocketGame() {
-            if (isGameOver) return;
-            const canvasHeight = document.getElementById('game-canvas-container').clientHeight - 40;
-            for (let i = 0; i < activeFallingWords.length; i++) {
-                let item = activeFallingWords[i];
-                item.y += item.speed;
-                item.element.style.top = item.y + 'px';
-                if (item.y >= canvasHeight) { endRocketGame(); break; }
-            }
-        }
-
-        function checkRocketInput() {
-            if (isGameOver) return;
-            const inputEl = document.getElementById('rocket-input');
-            const typedText = inputEl.value.trim().toLowerCase();
-            for (let i = 0; i < activeFallingWords.length; i++) {
-                let item = activeFallingWords[i];
-                if (item.wordData.en.toLowerCase() === typedText) {
-                    speakWord(item.wordData.en);
-                    item.element.remove();
-                    activeFallingWords.splice(i, 1);
-                    rocketScore += 1;
-                    document.getElementById('rocket-score').innerText = rocketScore;
-                    inputEl.value = '';
-                    break;
                 }
-            }
-        }
 
-        function endRocketGame() {
-            isGameOver = true;
-            stopRocketGame();
-            document.getElementById('final-score').innerText = rocketScore;
-            document.getElementById('game-over-screen').style.display = 'flex';
-        }
-
-        let playlistTimer = null;
-        let isPlayingList = false;
-
-        function startPlaylist() {
-            if (isPlayingList) return;
-            const listToPlay = getFilteredWords();
-            if (listToPlay.length === 0) { alert('Danh sách trống!'); return; }
-            isPlayingList = true;
-            let index = 0;
-
-            function playNext() {
-                if (!isPlayingList || index >= listToPlay.length) { stopPlaylist(); return; }
-                const item = listToPlay[index];
-                document.getElementById('playlist-status').innerText = `Đang phát (${index + 1}/${listToPlay.length}): ${item.en}`;
-                speakWord(item.en, true, () => {
-                    if (!isPlayingList) return;
-                    playlistTimer = setTimeout(() => {
-                        speakWord(item.vn, false, () => {
-                            if (!isPlayingList) return;
-                            playlistTimer = setTimeout(() => { index++; playNext(); }, 1000);
-                        });
-                    }, 600);
+                document.getElementById('btn-check-type').addEventListener('click', checkTypeAnswer);
+                document.getElementById('user-input').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') checkTypeAnswer();
                 });
-            }
-            playNext();
-        }
 
-        function stopPlaylist() {
-            isPlayingList = false;
-            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-            clearTimeout(playlistTimer);
-            document.getElementById('playlist-status').innerText = 'Trạng thái: Đã dừng';
-        }
+                function getLevenshteinDistance(a, b) {
+                    const matrix = [];
+                    for (let i = 0; i <= b.length; i++) matrix[i] = [i];
+                    for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
 
-        function exportData() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(words));
-            const dl = document.createElement('a');
-            dl.setAttribute("href", dataStr);
-            dl.setAttribute("download", "vocab_backup.json");
-            document.body.appendChild(dl); dl.click(); dl.remove();
-        }
+                    for (let i = 1; i <= b.length; i++) {
+                        for (let j = 1; j <= a.length; j++) {
+                            if (b.charAt(i - 1) === a.charAt(j - 1)) {
+                                matrix[i][j] = matrix[i - 1][j - 1];
+                            } else {
+                                matrix[i][j] = Math.min(matrix[i - 1][j - 1] + 1, Math.min(matrix[i][j - 1] + 1, matrix[i - 1][j] + 1));
+                            }
+                        }
+                    }
+                    return matrix[b.length][a.length];
+                }
 
-        function importData(event) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    words = JSON.parse(e.target.result);
-                    saveWords();
-                    if (currentMode !== 'rocket') nextQuestion();
-                    alert('Nhập dữ liệu thành công!');
-                } catch(err) { alert('File không hợp lệ!'); }
-            };
-            if (event.target.files[0]) reader.readAsText(event.target.files[0]);
-        }
+                function checkTypeAnswer() {
+                    const currentPool = getFilteredWords();
+                    if (currentWordIndex === -1 || currentPool.length === 0) return;
+                    const input = document.getElementById('user-input').value.trim();
+                    const correctWordObj = window.activeCurrentWord || currentPool[currentWordIndex];
+                    const correct = correctWordObj.en;
+                    const resultDiv = document.getElementById('result-message');
+                    const exampleBox = document.getElementById('example-box');
 
-        updateDateFilterOptions();
-        renderWordList();
-        // Mặc định khởi chạy vào chế độ Bắn Tên Lửa
-        startRocketGame();
+                    if (input.toLowerCase() === correct.toLowerCase()) {
+                        resultDiv.className = "result success";
+                        resultDiv.innerText = `Chính xác! 🔊 (${correct})`;
+                        
+                        if (correctWordObj.example) {
+                            document.getElementById('example-text').innerText = correctWordObj.example;
+                            exampleBox.style.display = 'block';
+                        }
+
+                        speakWord(correct, true);
+                        wrongWords = wrongWords.filter(w => w.en !== correct);
+                        setTimeout(nextQuestion, 4000);
+                    } else {
+                        resultDiv.className = "result error";
+                        exampleBox.style.display = 'none';
+                        let suggestionMsg = "";
+                        const cleanInput = input.toLowerCase();
+                        words.forEach(w => {
+                            if (getLevenshteinDistance(cleanInput, w.en.toLowerCase()) <= 2) {
+                                suggestionMsg = ` (Ý bạn là "${w.en}"?)`;
+                            }
+                        });
+                        resultDiv.innerText = `Sai rồi! Đáp án là: ${correct}${suggestionMsg}`;
+                        speakWord(correct, true);
+                        if (!wrongWords.some(w => w.en === correct)) wrongWords.push(correctWordObj);
+                    }
+                }
+
+                document.getElementById('btn-check-grammar').addEventListener('click', checkUserSentenceLocal);
+                document.getElementById('btn-check-ai').addEventListener('click', checkUserSentenceAI);
+
+                function checkUserSentenceLocal() {
+                    const currentPool = getFilteredWords();
+                    if (currentWordIndex === -1 || currentPool.length === 0) return;
+                    const text = document.getElementById('user-sentence').value.trim();
+                    const correctWordObj = window.activeCurrentWord || currentPool[currentWordIndex];
+                    const target = correctWordObj.en.toLowerCase();
+                    const resultDiv = document.getElementById('result-message');
+                    const exampleBox = document.getElementById('example-box');
+
+                    if (!text) {
+                        resultDiv.className = "result error";
+                        resultDiv.innerText = "⚠️ Vui lòng nhập vào một câu hoàn chỉnh.";
+                        exampleBox.style.display = 'none';
+                        return;
+                    }
+
+                    const wordsInSentence = text.split(/\s+/).map(w => w.replace(/[^a-zA-Z]/g, '').toLowerCase());
+                    
+                    if (!wordsInSentence.includes(target)) {
+                        resultDiv.className = "result error";
+                        resultDiv.innerHTML = `❌ Lỗi vị trí/thiếu từ: Câu của bạn chưa chứa từ mục tiêu yêu cầu là "<strong>${correctWordObj.en}</strong>".`;
+                        exampleBox.style.display = 'none';
+                        return;
+                    }
+
+                    let errors = [];
+                    if (text[0] !== text[0].toUpperCase()) {
+                        errors.push("• Câu nên bắt đầu bằng chữ cái viết hoa.");
+                    }
+                    if (!['.', '!', '?'].includes(text[text.length - 1])) {
+                        errors.push("• Câu nên kết thúc bằng dấu chấm (.), dấu chấm hỏi (?) hoặc dấu cảm (!).");
+                    }
+
+                    if (errors.length > 0) {
+                        resultDiv.className = "result error";
+                        resultDiv.innerHTML = `⚠️ Phát hiện điểm cần cải thiện trong câu:<br>` + errors.join('<br>');
+                        exampleBox.style.display = 'none';
+                    } else {
+                        resultDiv.className = "result success";
+                        resultDiv.innerHTML = `✅ Tuyệt vời! Câu chứa đúng từ mục tiêu và thỏa mãn các quy tắc cơ bản.`;
+                        if (correctWordObj.example) {
+                            document.getElementById('example-text').innerText = correctWordObj.example;
+                            exampleBox.style.display = 'block';
+                        }
+                        speakWord(correctWordObj.en, true);
+                        setTimeout(nextQuestion, 4000);
+                    }
+                }
+
+                async function checkUserSentenceAI() {
+                    const apiKey = localStorage.getItem('my_openrouter_api_key');
+                    if (!apiKey) {
+                        alert('Vui lòng bấm vào nút "🔑 Cài đặt AI Key" ở góc trên để nhập OpenRouter API Key trước!');
+                        return;
+                    }
+
+                    const currentPool = getFilteredWords();
+                    const correctWordObj = window.activeCurrentWord || currentPool[currentWordIndex];
+                    const text = document.getElementById('user-sentence').value.trim();
+                    const resultDiv = document.getElementById('result-message');
+                    const exampleBox = document.getElementById('example-box');
+
+                    if (!text) {
+                        resultDiv.className = "result error";
+                        resultDiv.innerText = "⚠️ Vui lòng nhập câu.";
+                        return;
+                    }
+
+                    resultDiv.className = "result";
+                    resultDiv.innerText = "⏳ AI đang phân tích ngữ pháp qua OpenRouter...";
+                    exampleBox.style.display = 'none';
+
+                    try {
+                        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${apiKey}`,
+                                'HTTP-Referer': window.location.href,
+                                'X-Title': 'Vocab Game Pro'
+                            },
+                            body: JSON.stringify({
+                                model: "openrouter/free",
+                                messages: [
+                                    {
+                                        role: "system",
+                                        content: "You are an English teacher. Evaluate if the user's sentence correctly uses the target word. Respond in Vietnamese. If there are grammar or spelling errors, point them out clearly. If it's correct, praise the user."
+                                    },
+                                    {
+                                        role: "user",
+                                        content: `Target word: "${correctWordObj.en}". User sentence: "${text}"`
+                                    }
+                                ],
+                                temperature: 0.3
+                            })
+                        });
+
+                        const data = await response.json();
+                        if (data.choices && data.choices[0]) {
+                            const aiReply = data.choices[0].message.content;
+                            resultDiv.className = "result success";
+                            resultDiv.innerHTML = `✨ <b>Đánh giá từ AI (OpenRouter):</b><br>${aiReply.replace(/\n/g, '<br>')}`;
+                            if (correctWordObj.example) {
+                                document.getElementById('example-text').innerText = correctWordObj.example;
+                                exampleBox.style.display = 'block';
+                            }
+                            speakWord(correctWordObj.en, true);
+                        } else if (data.error) {
+                            resultDiv.className = "result error";
+                            resultDiv.innerText = "⚠️ Lỗi từ OpenRouter: " + (data.error.message || JSON.stringify(data.error));
+                        } else {
+                            resultDiv.className = "result error";
+                            resultDiv.innerText = "⚠️ Phản hồi từ OpenRouter không hợp lệ.";
+                        }
+                    } catch (err) {
+                        resultDiv.className = "result error";
+                        resultDiv.innerText = "⚠️ Lỗi kết nối tới OpenRouter API.";
+                    }
+                }
+
+                function nextQuestion() {
+                    document.getElementById('result-message').innerText = '';
+                    document.getElementById('example-box').style.display = 'none';
+                    const userInputEl = document.getElementById('user-input');
+                    const userSentenceEl = document.getElementById('user-sentence');
+                    if (userInputEl) userInputEl.value = '';
+                    if (userSentenceEl) userSentenceEl.value = '';
+                    
+                    const currentPool = getFilteredWords();
+
+                    if (currentPool.length === 0) {
+                        document.getElementById('target-vn').innerText = "🎉 Không có từ vựng nào theo bộ lọc này!";
+                        return;
+                    }
+
+                    let currentWord;
+                    if (wrongWords.length > 0 && Math.random() < 0.7) {
+                        const wrongIndex = Math.floor(Math.random() * wrongWords.length);
+                        currentWord = wrongWords[wrongIndex];
+                        currentWordIndex = currentPool.indexOf(currentWord);
+                    } else {
+                        let newIndex;
+                        if (currentPool.length === 1) newIndex = 0;
+                        else {
+                            do {
+                                newIndex = Math.floor(Math.random() * currentPool.length);
+                            } while (newIndex === currentWordIndex && currentPool.length > 1);
+                        }
+                        currentWordIndex = newIndex;
+                        currentWord = currentPool[currentWordIndex];
+                    }
+
+                    document.getElementById('target-vn').innerText = currentWord.vn;
+                    document.getElementById('current-en-word').innerText = currentWord.en;
+                    
+                    if (currentMode === 'type') {
+                        let sampleSentence = currentWord.example || `This is an example sentence containing ${currentWord.en}.`;
+                        let maskedSentence = sampleSentence.replace(new RegExp(currentWord.en, 'gi'), '____');
+                        document.getElementById('type-sample-sentence').innerText = maskedSentence;
+                    }
+
+                    if (currentMode === 'scramble') {
+                        setupScrambleGame(currentWord);
+                    } else if (currentMode === 'choice') {
+                        setupChoiceOptions(currentWord, currentPool);
+                    }
+                    
+                    window.activeCurrentWord = currentWord;
+                }
+
+                function setupChoiceOptions(correctWord, currentPool) {
+                    const container = document.getElementById('choice-container');
+                    container.innerHTML = '';
+                    let options = [correctWord.en];
+                    let poolSource = currentPool.length >= 4 ? currentPool : words;
+                    let otherWords = poolSource.filter(w => w.en !== correctWord.en).sort(() => 0.5 - Math.random());
+                    for (let i = 0; i < Math.min(3, otherWords.length); i++) options.push(otherWords[i].en);
+                    options.sort(() => 0.5 - Math.random());
+
+                    options.forEach(opt => {
+                        const btn = document.createElement('button');
+                        btn.innerText = opt;
+                        btn.addEventListener('click', () => {
+                            const correctWordObj = window.activeCurrentWord;
+                            const exampleBox = document.getElementById('example-box');
+                            if (opt === correctWordObj.en) {
+                                document.getElementById('result-message').className = "result success";
+                                document.getElementById('result-message').innerText = "Chính xác! 🔊";
+                                
+                                if (correctWordObj.example) {
+                                    document.getElementById('example-text').innerText = correctWordObj.example;
+                                    exampleBox.style.display = 'block';
+                                }
+
+                                speakWord(correctWordObj.en);
+                                setTimeout(nextQuestion, 3500);
+                            } else {
+                                document.getElementById('result-message').className = "result error";
+                                document.getElementById('result-message').innerText = `Sai rồi! Là: ${correctWordObj.en}`;
+                                exampleBox.style.display = 'none';
+                                speakWord(correctWordObj.en);
+                                if (!wrongWords.some(w => w.en === correctWordObj.en)) wrongWords.push(correctWordObj);
+                                setTimeout(nextQuestion, 2000);
+                            }
+                        });
+                        container.appendChild(btn);
+                    });
+                }
+
+                let rocketScore = 0;
+                let activeFallingWords = [];
+                let gameInterval = null;
+                let spawnInterval = null;
+                let isGameOver = false;
+
+                function startRocketGame() {
+                    stopRocketGame();
+                    const currentPool = getFilteredWords();
+                    if (currentPool.length === 0) { 
+                        const wAreaEl = document.getElementById('words-area');
+                        if(wAreaEl) wAreaEl.innerHTML = '<div style="color:#fff; text-align:center; padding-top:150px;">Không có từ vựng nào trong bộ lọc này để chơi tên lửa!</div>';
+                        return; 
+                    }
+                    rocketScore = 0; isGameOver = false; activeFallingWords = [];
+                    const rScoreEl = document.getElementById('rocket-score');
+                    const wAreaEl = document.getElementById('words-area');
+                    const overScreen = document.getElementById('game-over-screen');
+                    const rInput = document.getElementById('rocket-input');
+
+                    if(rScoreEl) rScoreEl.innerText = '0';
+                    if(wAreaEl) wAreaEl.innerHTML = '';
+                    if(overScreen) overScreen.style.display = 'none';
+                    if(rInput) { rInput.value = ''; rInput.focus(); }
+
+                    gameInterval = setInterval(updateRocketGame, 50);
+                    spawnInterval = setInterval(spawnFallingWord, 4500);
+                    spawnFallingWord();
+                }
+
+                function stopRocketGame() { clearInterval(gameInterval); clearInterval(spawnInterval); }
+
+                function spawnFallingWord() {
+                    if (isGameOver) return;
+                    const currentPool = getFilteredWords();
+                    if (currentPool.length === 0) return;
+                    const randomWord = currentPool[Math.floor(Math.random() * currentPool.length)];
+
+                    const wordEl = document.createElement('div');
+                    wordEl.className = 'falling-word';
+                    wordEl.innerHTML = `${randomWord.en} <span>(${randomWord.vn})</span>`;
+                    
+                    const canvasContainer = document.getElementById('game-canvas-container');
+                    if(!canvasContainer) return;
+                    const containerWidth = canvasContainer.clientWidth - 140;
+                    const randomX = Math.max(10, Math.floor(Math.random() * containerWidth));
+                    wordEl.style.left = randomX + 'px';
+                    wordEl.style.top = '0px';
+                    document.getElementById('words-area').appendChild(wordEl);
+
+                    activeFallingWords.push({ element: wordEl, wordData: randomWord, y: 0, speed: 0.35 + (rocketScore * 0.02) });
+                }
+
+                function updateRocketGame() {
+                    if (isGameOver) return;
+                    const canvasContainer = document.getElementById('game-canvas-container');
+                    if(!canvasContainer) return;
+                    const canvasHeight = canvasContainer.clientHeight - 40;
+                    for (let i = 0; i < activeFallingWords.length; i++) {
+                        let item = activeFallingWords[i];
+                        item.y += item.speed;
+                        item.element.style.top = item.y + 'px';
+                        if (item.y >= canvasHeight) { endRocketGame(); break; }
+                    }
+                }
+
+                document.getElementById('rocket-input').addEventListener('input', () => {
+                    if (isGameOver) return;
+                    const inputEl = document.getElementById('rocket-input');
+                    if(!inputEl) return;
+                    const typedText = inputEl.value.trim().toLowerCase();
+                    for (let i = 0; i < activeFallingWords.length; i++) {
+                        let item = activeFallingWords[i];
+                        if (item.wordData.en.toLowerCase() === typedText) {
+                            speakWord(item.wordData.en);
+                            item.element.remove();
+                            activeFallingWords.splice(i, 1);
+                            rocketScore += 1;
+                            document.getElementById('rocket-score').innerText = rocketScore;
+                            inputEl.value = '';
+                            break;
+                        }
+                    }
+                });
+
+                function endRocketGame() {
+                    isGameOver = true;
+                    stopRocketGame();
+                    const finalScoreEl = document.getElementById('final-score');
+                    const overScreen = document.getElementById('game-over-screen');
+                    if(finalScoreEl) finalScoreEl.innerText = rocketScore;
+                    if(overScreen) overScreen.style.display = 'flex';
+                }
+
+                document.getElementById('btn-restart-rocket').addEventListener('click', startRocketGame);
+
+                let playlistTimer = null;
+                let isPlayingList = false;
+
+                document.getElementById('btn-start-playlist').addEventListener('click', startPlaylist);
+                document.getElementById('btn-stop-playlist').addEventListener('click', stopPlaylist);
+
+                function startPlaylist() {
+                    if (isPlayingList) return;
+                    const listToPlay = getFilteredWords();
+                    if (listToPlay.length === 0) { alert('Danh sách trống!'); return; }
+                    isPlayingList = true;
+                    let index = 0;
+
+                    function playNext() {
+                        if (!isPlayingList || index >= listToPlay.length) { stopPlaylist(); return; }
+                        const item = listToPlay[index];
+                        const statusEl = document.getElementById('playlist-status');
+                        if(statusEl) statusEl.innerText = `Đang phát (${index + 1}/${listToPlay.length}): ${item.en}`;
+                        
+                        speakWord(item.en, true, () => {
+                            if (!isPlayingList) return;
+                            playlistTimer = setTimeout(() => {
+                                speakWord(item.vn, false, () => {
+                                    if (!isPlayingList) return;
+                                    playlistTimer = setTimeout(() => { index++; playNext(); }, 1000);
+                                });
+                            }, 600);
+                        });
+                    }
+                    playNext();
+                }
+
+                function stopPlaylist() {
+                    isPlayingList = false;
+                    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+                    clearTimeout(playlistTimer);
+                    const statusEl = document.getElementById('playlist-status');
+                    if(statusEl) statusEl.innerText = 'Trạng thái: Đã dừng';
+                }
+
+                document.getElementById('btn-export').addEventListener('click', () => {
+                    const exportData = {
+                        words: words,
+                        customCategories: customCategoryNames
+                    };
+                    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportData));
+                    const dl = document.createElement('a');
+                    dl.setAttribute("href", dataStr);
+                    dl.setAttribute("download", "vocab_backup.json");
+                    document.body.appendChild(dl); dl.click(); dl.remove();
+                });
+
+                document.getElementById('btn-import-trigger').addEventListener('click', () => {
+                    document.getElementById('import-file').click();
+                });
+
+                document.getElementById('import-file').addEventListener('change', (event) => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            const parsed = JSON.parse(e.target.result);
+                            if (Array.isArray(parsed)) {
+                                words = parsed;
+                            } else if (parsed && parsed.words) {
+                                words = parsed.words;
+                                if (parsed.customCategories) {
+                                    customCategoryNames = parsed.customCategories;
+                                    localStorage.setItem('my_vocab_custom_categories', JSON.stringify(customCategoryNames));
+                                }
+                            }
+                            updateCategoryDropdowns();
+                            saveWords();
+                            if (currentMode !== 'rocket') nextQuestion();
+                            alert('Nhập dữ liệu thành công!');
+                        } catch(err) { alert('File không hợp lệ!'); }
+                    };
+                    if (event.target.files[0]) reader.readAsText(event.target.files[0]);
+                });
+
+                updateCategoryDropdowns();
+                updateDateFilterOptions();
+                renderWordList();
+                startRocketGame();
+            });
+        })();
     </script>
 </body>
 </html>
