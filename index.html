@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game Từ Vựng Tiếng Anh - Tùy Biến Chủ Đề</title>
+    <!-- Tích hợp thư viện Compromise NLP từ CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/compromise@14.14.3/builds/compromise.min.js"></script>
     <style>
         :root {
             --bg-color: #f0f4f8;
@@ -74,6 +76,7 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #6e8efb 100%);
             display: flex; justify-content: center; align-items: center; z-index: 1000;
+            transition: opacity 0.5s ease;
         }
         .welcome-card {
             background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px);
@@ -84,17 +87,38 @@
         .game-icons { font-size: 40px; margin-bottom: 15px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
         .welcome-card h1 { color: #ffffff; font-size: 2rem; margin-bottom: 10px; }
         .welcome-card p { color: #d0e1fd; font-size: 1rem; margin-bottom: 25px; line-height: 1.5; }
+        
+        button, .theme-btn {
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.1s ease, background 0.3s, color 0.3s;
+        }
+        button:active { transform: scale(0.97); }
+
+        .ripple {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            transform: scale(0);
+            animation: ripple-anim 0.5s linear;
+            pointer-events: none;
+        }
+        @keyframes ripple-anim {
+            to { transform: scale(4); opacity: 0; }
+        }
+
         .start-game-btn {
             background: linear-gradient(45deg, #00b09b, #96c93d); color: white; border: none;
             padding: 14px 35px; font-size: 1.1rem; font-weight: bold; border-radius: 50px;
-            cursor: pointer; box-shadow: 0 5px 15px rgba(0, 176, 155, 0.4);
+            box-shadow: 0 5px 15px rgba(0, 176, 155, 0.4);
         }
 
         .top-bar { display: flex; width: 100%; max-width: 650px; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .theme-selector { display: flex; gap: 8px; background: var(--container-bg); padding: 8px; border-radius: 50px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .theme-btn { width: 26px; height: 26px; border-radius: 50%; border: 2px solid #fff; cursor: pointer; }
+        .theme-btn { width: 26px; height: 26px; border-radius: 50%; border: 2px solid #fff; }
         .theme-btn.active { transform: scale(1.2); border-color: var(--text-color); }
-        .settings-btn { background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-color); padding: 8px 12px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; }
+        .settings-btn { background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-color); padding: 8px 12px; border-radius: 20px; font-size: 13px; font-weight: bold; }
 
         .container { background: var(--container-bg); padding: 25px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 650px; }
         h2 { text-align: center; color: var(--text-color); margin-top: 0; font-size: 1.2rem; border-bottom: 2px solid var(--border-color); padding-bottom: 5px; }
@@ -103,53 +127,81 @@
         .category-select, select.form-select { width: 100%; padding: 10px; border: 2px solid var(--primary-color); border-radius: 8px; font-weight: bold; background: var(--card-bg); color: var(--text-color); outline: none; cursor: pointer; font-size: 14px; }
 
         .mode-select { display: flex; gap: 5px; margin-bottom: 20px; flex-wrap: wrap; }
-        .mode-select button { padding: 8px 6px; border: none; background: var(--primary-color); color: white; border-radius: 8px; cursor: pointer; flex: 1; font-weight: bold; font-size: 11px; min-width: 75px; }
+        .mode-select button { padding: 8px 6px; border: none; background: var(--primary-color); color: white; border-radius: 8px; flex: 1; font-weight: bold; font-size: 11px; min-width: 75px; }
         .mode-select button:hover { background: var(--primary-hover); }
         .mode-select button.active { background: var(--success-color); box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
 
-        .card { background: var(--card-bg); padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 15px; border: 1px solid var(--border-color); }
+        .card { background: var(--card-bg); padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 15px; border: 1px solid var(--border-color); animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
         .vietnamese-word { font-size: 22px; font-weight: bold; color: var(--vn-word-color); margin-bottom: 10px; }
 
         input[type="text"], textarea, input[type="password"] { width: 100%; padding: 12px; margin-bottom: 10px; border: 2px solid var(--border-color); border-radius: 8px; font-size: 15px; background: var(--list-item-bg); color: var(--text-color); }
         input[type="text"]:focus, textarea:focus, input[type="password"]:focus { outline: none; border-color: var(--primary-color); }
 
         .options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .options button { background: var(--container-bg); color: var(--primary-color); border: 2px solid var(--primary-color); padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .options button { background: var(--container-bg); color: var(--primary-color); border: 2px solid var(--primary-color); padding: 10px; border-radius: 8px; font-weight: bold; }
 
         .result { font-weight: bold; margin-top: 10px; text-align: left; font-size: 0.95rem; line-height: 1.4; }
         .success { color: var(--success-color); }
         .error { color: var(--error-color); }
 
+        /* Scramble styles & Slot click to return */
         .scramble-slots { display: flex; justify-content: center; gap: 6px; margin: 15px 0; min-height: 45px; flex-wrap: wrap; }
-        .scramble-slot { width: 38px; height: 38px; border: 2px dashed var(--primary-color); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; background: var(--container-bg); color: var(--text-color); }
+        .scramble-slot { 
+            width: 38px; height: 38px; border: 2px dashed var(--primary-color); border-radius: 6px; 
+            display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px; 
+            background: var(--container-bg); color: var(--text-color); cursor: pointer; transition: transform 0.1s;
+        }
+        .scramble-slot:hover { border-color: var(--error-color); background: rgba(220, 53, 69, 0.1); transform: scale(1.05); }
         .scramble-letters { display: flex; justify-content: center; gap: 6px; margin: 15px 0; flex-wrap: wrap; }
-        .letter-btn { width: 38px; height: 38px; background: var(--primary-color); color: #fff; border: none; border-radius: 6px; font-weight: bold; font-size: 18px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .letter-btn { width: 38px; height: 38px; background: var(--primary-color); color: #fff; border: none; border-radius: 6px; font-weight: bold; font-size: 18px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
 
         .example-box {
             margin-top: 12px; padding: 10px 14px; background: var(--container-bg);
             border-left: 4px solid var(--primary-color); border-radius: 4px; text-align: left; font-size: 0.9rem; display: none;
         }
 
+        /* Rocket Game Canvas & Explosion Styles */
         #game-canvas-container { display: none; position: relative; width: 100%; height: 380px; background: #0d1117; border-radius: 10px; overflow: hidden; border: 2px solid var(--primary-color); }
-        .falling-word { position: absolute; color: #58a6ff; font-weight: bold; font-size: 17px; background: rgba(255,255,255,0.12); padding: 4px 8px; border-radius: 6px; border: 1px solid #30363d; white-space: nowrap; }
+        .falling-word { position: absolute; color: #58a6ff; font-weight: bold; font-size: 17px; background: rgba(255,255,255,0.12); padding: 4px 8px; border-radius: 6px; border: 1px solid #30363d; white-space: nowrap; transition: top 0.05s linear; }
         .falling-word span { color: #ffa657; font-size: 12px; display: block; text-align: center; }
         .score-board { position: absolute; top: 10px; left: 10px; color: #3fb950; font-weight: bold; font-size: 16px; z-index: 10; }
         .game-over-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); color: #ff7b72; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 20; }
-        .game-over-screen button { margin-top: 15px; padding: 10px 20px; background: #238636; max-width: 150px; border: none; color: #fff; border-radius: 8px; cursor: pointer; }
-        .rocket-launcher { position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%); font-size: 28px; }
+        .game-over-screen button { margin-top: 15px; padding: 10px 20px; background: #238636; max-width: 150px; border: none; color: #fff; border-radius: 8px; }
+        
+        .rocket-launcher { position: absolute; bottom: 5px; left: 50%; transform: translateX(-50%); font-size: 28px; z-index: 5; transition: left 0.1s ease-out; }
+        
+        /* Hiệu ứng Tên lửa bay từ dưới lên mục tiêu */
+        .flying-missile {
+            position: absolute; width: 6px; height: 18px; background: #ff4757; border-radius: 50% 50% 0 0;
+            box-shadow: 0 0 10px #ff4757, 0 0 20px #ffa502; z-index: 8; pointer-events: none;
+            transition: all 0.25s cubic-bezier(0.1, 0.8, 0.3, 1);
+        }
+
+        /* Mảnh vỡ nổ tung (Particle Explosion) */
+        .explosion-particle {
+            position: absolute; width: 6px; height: 6px; border-radius: 50%;
+            pointer-events: none; z-index: 9;
+            animation: particle-fly 0.5s ease-out forwards;
+        }
+        @keyframes particle-fly {
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--dx), var(--dy)) scale(0.2); opacity: 0; }
+        }
 
         .word-list { margin-top: 15px; max-height: 200px; overflow-y: auto; }
         .word-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; border-bottom: 1px solid var(--list-item-border); background: var(--list-item-bg); border-radius: 8px; margin-bottom: 5px; }
         .word-item strong { color: var(--primary-color); }
         .category-tag { font-size: 11px; background: var(--border-color); padding: 2px 6px; border-radius: 4px; margin-left: 5px; opacity: 0.8; }
-        .delete-btn { background: var(--error-color); padding: 4px 8px; flex: none; font-size: 12px; border: none; color: #fff; border-radius: 6px; cursor: pointer; }
+        .delete-btn { background: var(--error-color); padding: 4px 8px; flex: none; font-size: 12px; border: none; color: #fff; border-radius: 6px; }
 
         .add-form { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; }
         .playlist-section { background: var(--card-bg); padding: 15px; border-radius: 12px; margin-top: 20px; border: 1px solid var(--border-color); }
         .playlist-controls { display: flex; gap: 8px; margin-top: 10px; }
 
         .sync-tools { display: flex; gap: 10px; margin-top: 20px; background: var(--sync-bg); padding: 12px; border-radius: 10px; border: 1px solid var(--border-color); }
-        .sync-tools button { font-size: 12px; padding: 8px; background: #17a2b8; border: none; color: #fff; border-radius: 6px; cursor: pointer; flex: 1; }
+        .sync-tools button { font-size: 12px; padding: 8px; background: #17a2b8; border: none; color: #fff; border-radius: 6px; flex: 1; }
 
         #settings-modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -159,21 +211,48 @@
             background: var(--container-bg); padding: 25px; border-radius: 14px; width: 90%; max-width: 450px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.3); border: 1px solid var(--border-color);
         }
+
+        #toast-container {
+            position: fixed; bottom: 20px; right: 20px; z-index: 9999;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .toast {
+            background: #333; color: #fff; padding: 12px 20px; border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); font-size: 14px;
+            animation: slideInRight 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
+        }
+        .toast.success { background: var(--success-color); }
+        .toast.error { background: var(--error-color); }
+        @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes fadeOut { to { opacity: 0; transform: translateY(10px); } }
+
+        .confetti {
+            position: fixed; width: 10px; height: 10px; background-color: #ff0;
+            top: 50%; left: 50%; z-index: 9998; opacity: 1;
+            pointer-events: none;
+            animation: explode 0.8s ease-out forwards;
+        }
+        @keyframes explode {
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(0.5); opacity: 0; }
+        }
     </style>
 </head>
 <body>
+
+    <div id="toast-container"></div>
 
     <div id="welcome-screen">
         <div class="welcome-card">
             <div class="game-icons">
                 <span>🚀</span>
-                <span>📝</span>
+                <span>💥</span>
                 <span>🔤</span>
                 <span>⌨️</span>
                 <span>✍️</span>
             </div>
             <h1>Game Từ Vựng Pro</h1>
-            <p>Tự do thêm/xóa chủ đề, học từ vựng qua 5 chế độ: Bắn tên lửa, Trắc nghiệm, Sắp xếp từ, Tự gõ từ và Đặt câu!</p>
+            <p>Tích hợp Tên lửa phá hủy (hiệu ứng nổ + tiếng "bum"), Hoàn tác chữ xếp & NLP Compromise cực đỉnh!</p>
             <button class="start-game-btn" id="btn-start-screen">🎮 Bắt Đầu Ngay</button>
         </div>
     </div>
@@ -182,12 +261,12 @@
         <div class="modal-content">
             <h2 style="margin-top:0; border:none;">⚙️ Cấu hình OpenRouter API Key</h2>
             <p style="font-size: 13px; color: var(--text-color); opacity: 0.8; line-height: 1.4;">
-                Nhập OpenRouter API Key (bắt đầu bằng <code>sk-or-v1-...</code>) để bật tính năng AI chấm điểm.
+                Nhập OpenRouter API Key để bật tính năng AI chấm điểm nâng cao.
             </p>
             <input type="password" id="api-key-input" placeholder="sk-or-v1-..." autocomplete="off">
             <div style="display: flex; gap: 10px; margin-top: 15px;">
-                <button id="btn-save-key" style="flex:1; padding:10px; background:var(--success-color); border:none; color:#fff; border-radius:8px; font-weight:bold; cursor:pointer;">Lưu lại</button>
-                <button id="btn-close-key" style="flex:1; padding:10px; background:var(--error-color); border:none; color:#fff; border-radius:8px; font-weight:bold; cursor:pointer;">Đóng</button>
+                <button id="btn-save-key" style="flex:1; padding:10px; background:var(--success-color); border:none; color:#fff; border-radius:8px; font-weight:bold;">Lưu lại</button>
+                <button id="btn-close-key" style="flex:1; padding:10px; background:var(--error-color); border:none; color:#fff; border-radius:8px; font-weight:bold;">Đóng</button>
             </div>
         </div>
     </div>
@@ -230,11 +309,12 @@
             <div id="choice-container" class="options" style="display: none;"></div>
 
             <div id="scramble-container" style="display: none;">
+                <p style="font-size: 12px; color: var(--primary-color); margin-bottom: 5px;">💡 <i>Bấm vào ô chữ phía trên để hoàn tác trả về hàng chờ</i></p>
                 <div class="scramble-slots" id="scramble-slots"></div>
                 <div class="scramble-letters" id="scramble-letters"></div>
                 <div style="display: flex; gap: 10px; margin-top: 10px;">
-                    <button id="btn-reset-scramble" style="flex:1; padding:8px; background:var(--error-color); color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">Xóa lại 🔄</button>
-                    <button id="btn-check-scramble" style="flex:1; padding:8px; background:var(--success-color); color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">Kiểm tra ✅</button>
+                    <button id="btn-reset-scramble" style="flex:1; padding:8px; background:var(--error-color); color:#fff; border:none; border-radius:8px; font-weight:bold;">Xóa lại 🔄</button>
+                    <button id="btn-check-scramble" style="flex:1; padding:8px; background:var(--success-color); color:#fff; border:none; border-radius:8px; font-weight:bold;">Kiểm tra ✅</button>
                 </div>
             </div>
 
@@ -243,15 +323,15 @@
                     💡 <strong>Câu mẫu gợi ý:</strong> <span id="type-sample-sentence" style="font-style: italic;">Đang tải...</span>
                 </div>
                 <input type="text" id="user-input" placeholder="Type in English..." autocomplete="off">
-                <button id="btn-check-type" style="width:100%; padding:10px; background:var(--primary-color); color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">Kiểm tra</button>
+                <button id="btn-check-type" style="width:100%; padding:10px; background:var(--primary-color); color:#fff; border:none; border-radius:8px; font-weight:bold;">Kiểm tra</button>
             </div>
 
             <div id="sentence-container" style="display: none; text-align: left;">
-                <p style="font-size: 13px; margin-bottom: 6px;">Tự viết câu tiếng Anh chứa từ mục tiêu:</p>
+                <p style="font-size: 13px; margin-bottom: 6px;">Tự viết câu tiếng Anh chứa từ mục tiêu (Được phân tích thông minh bằng Compromise NLP):</p>
                 <textarea id="user-sentence" rows="3" placeholder="Ví dụ: I have great confidence in my skills..."></textarea>
                 <div style="display: flex; gap: 8px;">
-                    <button id="btn-check-grammar" style="flex:1; padding:10px; background:var(--primary-color); color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">🔍 Kiểm tra tại chỗ</button>
-                    <button id="btn-check-ai" style="flex:1; padding:10px; background:#6f42c1; color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer; display:none;">✨ Nhờ AI chấm (OpenRouter)</button>
+                    <button id="btn-check-grammar" style="flex:1; padding:10px; background:var(--primary-color); color:#fff; border:none; border-radius:8px; font-weight:bold;">🔍 NLP Kiểm tra tại chỗ</button>
+                    <button id="btn-check-ai" style="flex:1; padding:10px; background:#6f42c1; color:#fff; border:none; border-radius:8px; font-weight:bold; display:none;">✨ Nhờ AI chấm (OpenRouter)</button>
                 </div>
             </div>
 
@@ -265,7 +345,7 @@
         <div id="game-canvas-container" style="display: block;">
             <div class="score-board">Điểm: <span id="rocket-score">0</span></div>
             <div id="words-area"></div>
-            <div class="rocket-launcher">🚀</div>
+            <div class="rocket-launcher" id="rocket-launcher-icon">🚀</div>
             
             <div id="game-over-screen" class="game-over-screen" style="display: none;">
                 <h2>GAME OVER!</h2>
@@ -275,15 +355,15 @@
         </div>
         
         <div id="rocket-input-container" style="display: block; margin-top: 10px;">
-            <input type="text" id="rocket-input" placeholder="Gõ từ tiếng Anh đang rơi..." autocomplete="off">
+            <input type="text" id="rocket-input" placeholder="Gõ từ tiếng Anh đang rơi để phóng tên lửa..." autocomplete="off">
         </div>
 
         <div class="playlist-section">
             <h2>🎧 Nghe Từ Vựng Tự Động</h2>
             <div id="playlist-status" style="text-align: center; font-size: 14px; font-weight: bold; margin-bottom: 10px; color: var(--primary-color);">Trạng thái: Đang dừng</div>
             <div class="playlist-controls">
-                <button id="btn-start-playlist" style="background: var(--success-color); border:none; color:#fff; padding:10px; border-radius:8px; cursor:pointer; flex:1; font-weight:bold;">▶️ Bắt đầu Nghe</button>
-                <button id="btn-stop-playlist" style="background: var(--error-color); border:none; color:#fff; padding:10px; border-radius:8px; cursor:pointer; flex:1; font-weight:bold;">⏹️ Dừng lại</button>
+                <button id="btn-start-playlist" style="background: var(--success-color); border:none; color:#fff; padding:10px; border-radius:8px; flex:1; font-weight:bold;">▶️ Bắt đầu Nghe</button>
+                <button id="btn-stop-playlist" style="background: var(--error-color); border:none; color:#fff; padding:10px; border-radius:8px; flex:1; font-weight:bold;">⏹️ Dừng lại</button>
             </div>
         </div>
 
@@ -294,11 +374,11 @@
             
             <div style="grid-column: span 2; display: flex; gap: 6px;">
                 <select id="new-cat" class="form-select" style="flex: 1; margin-bottom: 0;"></select>
-                <button id="btn-add-category-prompt" type="button" style="padding: 0 12px; background: #17a2b8; border: none; color: #fff; font-weight: bold; border-radius: 8px; cursor: pointer; white-space: nowrap;" title="Tạo chủ đề mới">➕ Tạo</button>
-                <button id="btn-delete-category-prompt" type="button" style="padding: 0 12px; background: var(--error-color); border: none; color: #fff; font-weight: bold; border-radius: 8px; cursor: pointer; white-space: nowrap;" title="Xóa chủ đề đang chọn">🗑️ Xóa chủ đề</button>
+                <button id="btn-add-category-prompt" type="button" style="padding: 0 12px; background: #17a2b8; border: none; color: #fff; font-weight: bold; border-radius: 8px;" title="Tạo chủ đề mới">➕ Tạo</button>
+                <button id="btn-delete-category-prompt" type="button" style="padding: 0 12px; background: var(--error-color); border: none; color: #fff; font-weight: bold; border-radius: 8px;" title="Xóa chủ đề đang chọn">🗑️ Xóa chủ đề</button>
             </div>
 
-            <button id="btn-add-word" style="grid-column: span 2; margin-top: 5px; padding:10px; background:var(--primary-color); border:none; color:#fff; font-weight:bold; border-radius:8px; cursor:pointer;">Thêm Từ Vựng</button>
+            <button id="btn-add-word" style="grid-column: span 2; margin-top: 5px; padding:10px; background:var(--primary-color); border:none; color:#fff; font-weight:bold; border-radius:8px;">Thêm Từ Vựng</button>
         </div>
 
         <h2>📖 Danh Sách Từ (<span id="word-count">0</span>)</h2>
@@ -312,6 +392,79 @@
     </div>
 
     <script>
+        // --- HỆ THỐNG ÂM THANH "BUM" CHO TÊN LỬA NỔ ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playBoomSound() {
+            if (!audioCtx) return;
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            // Tạo tiếng nổ trầm "Bum" bằng White Noise kết hợp bộ lọc tần số giảm dần
+            const bufferSize = audioCtx.sampleRate * 0.4; // 400ms
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1;
+            }
+
+            const noise = audioCtx.createBufferSource();
+            noise.buffer = buffer;
+
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(300, audioCtx.currentTime);
+            filter.frequency.exponentialRampToValueAtTime(30, audioCtx.currentTime + 0.4);
+
+            const gainNode = audioCtx.createGain();
+            gainNode.gain.setValueAtTime(1.0, audioCtx.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+
+            noise.connect(filter);
+            filter.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            noise.start();
+        }
+
+        // --- CÁC HÀM HIỆU ỨNG & THÔNG BÁO ---
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerText = message;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function triggerConfetti() {
+            const colors = ['#007bff', '#28a745', '#ffc107', '#dc3545', '#17a2b8', '#6f42c1'];
+            for (let i = 0; i < 25; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'confetti';
+                particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 50 + Math.random() * 100;
+                particle.style.setProperty('--tx', `${Math.cos(angle) * distance}px`);
+                particle.style.setProperty('--ty', `${Math.sin(angle) * distance}px`);
+                document.body.appendChild(particle);
+                setTimeout(() => particle.remove(), 800);
+            }
+        }
+
+        document.addEventListener('click', function(e) {
+            const target = e.target.closest('button');
+            if (!target) return;
+            const rect = target.getBoundingClientRect();
+            const ripple = document.createElement('span');
+            ripple.className = 'ripple';
+            const size = Math.max(rect.width, rect.height);
+            ripple.style.width = ripple.style.height = `${size}px`;
+            ripple.style.left = `${e.clientX - rect.left - size / 2}px`;
+            ripple.style.top = `${e.clientY - rect.top - size / 2}px`;
+            target.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 500);
+        });
+
         (function() {
             document.addEventListener('DOMContentLoaded', () => {
                 const initDefaultWords = [
@@ -388,7 +541,7 @@
                 document.getElementById('btn-save-key').addEventListener('click', () => {
                     const key = document.getElementById('api-key-input').value.trim();
                     localStorage.setItem('my_openrouter_api_key', key);
-                    alert('Đã lưu OpenRouter API Key thành công!');
+                    showToast('Đã lưu OpenRouter API Key thành công!');
                     modal.style.display = 'none';
                     checkAIKeyStatus();
                 });
@@ -455,7 +608,7 @@
                     
                     updateCategoryDropdowns();
                     document.getElementById('new-cat').value = catKey;
-                    alert(`Đã tạo thành công chủ đề "${catName}"!`);
+                    showToast(`Đã tạo thành công chủ đề "${catName}"!`);
                 });
 
                 document.getElementById('btn-delete-category-prompt').addEventListener('click', () => {
@@ -464,12 +617,11 @@
                     const catNameToDelete = allCatsMap[currentCatKey];
 
                     if (Object.keys(allCatsMap).length <= 1) {
-                        alert("Bạn không thể xóa chủ đề cuối cùng còn lại!");
+                        showToast("Bạn không thể xóa chủ đề cuối cùng còn lại!", "error");
                         return;
                     }
 
-                    if (confirm(`Bạn có chắc chắn muốn xóa chủ đề "${catNameToDelete}"?\n(Các từ vựng thuộc chủ đề này sẽ được chuyển về chủ đề đầu tiên còn lại hoặc 'Khái niệm trừu tượng').`)) {
-                        // Tìm chủ đề thay thế nếu có
+                    if (confirm(`Bạn có chắc chắn muốn xóa chủ đề "${catNameToDelete}"?\n(Các từ vựng thuộc chủ đề này sẽ được chuyển về chủ đề đầu tiên còn lại).`)) {
                         const remainingKeys = Object.keys(allCatsMap).filter(k => k !== currentCatKey);
                         const fallbackCat = remainingKeys.includes('abstract') ? 'abstract' : remainingKeys[0];
 
@@ -479,9 +631,7 @@
                             }
                         });
 
-                        if (baseCategoryNames[currentCatKey]) {
-                            delete baseCategoryNames[currentCatKey];
-                        }
+                        if (baseCategoryNames[currentCatKey]) delete baseCategoryNames[currentCatKey];
                         if (customCategoryNames[currentCatKey]) {
                             delete customCategoryNames[currentCatKey];
                             localStorage.setItem('my_vocab_custom_categories', JSON.stringify(customCategoryNames));
@@ -491,7 +641,7 @@
                         selectedCategory = 'all';
                         updateCategoryDropdowns();
                         onFilterChange();
-                        alert(`Đã xóa thành công chủ đề "${catNameToDelete}"!`);
+                        showToast(`Đã xóa thành công chủ đề "${catNameToDelete}"!`);
                     }
                 });
 
@@ -608,6 +758,7 @@
                             words.splice(originalIndex, 1);
                             saveWords();
                             if (currentMode !== 'rocket') nextQuestion();
+                            showToast('Đã xóa từ vựng thành công!');
                         });
                         div.appendChild(delBtn);
                         listContainer.appendChild(div);
@@ -633,15 +784,17 @@
 
                     if (en && vn) {
                         if (words.some(w => w.en.toLowerCase() === en.toLowerCase())) {
-                            alert('Từ này đã có trong danh sách!'); return;
+                            showToast('Từ này đã có trong danh sách!', 'error'); return;
                         }
                         words.push({ en: en, vn: vn, cat: cat, date: todayStr, example: `This is an example sentence for ${en}.` });
                         saveWords();
                         document.getElementById('new-en').value = '';
                         document.getElementById('new-vn').value = '';
                         if (currentMode !== 'rocket') nextQuestion();
+                        showToast('Thêm từ vựng thành công!');
+                        triggerConfetti();
                     } else {
-                        alert('Vui lòng nhập đầy đủ từ tiếng Anh và nghĩa tiếng Việt!');
+                        showToast('Vui lòng nhập đầy đủ từ tiếng Anh và nghĩa tiếng Việt!', 'error');
                     }
                 });
 
@@ -658,6 +811,7 @@
                     renderScrambleBoard();
                 }
 
+                // --- TÍNH NĂNG HOÀN TÁC KHI CLICK VÀO Ô CHỮ ĐÃ CHỌN ---
                 function renderScrambleBoard() {
                     const slotsContainer = document.getElementById('scramble-slots');
                     const lettersContainer = document.getElementById('scramble-letters');
@@ -667,16 +821,29 @@
 
                     const cleanWord = scrambleTargetWord.replace(/[^a-zA-Z]/g, '');
 
+                    // Render các ô slot phía trên
                     for (let i = 0; i < cleanWord.length; i++) {
                         const slot = document.createElement('div');
                         slot.className = 'scramble-slot';
                         if (userChosenLetters[i]) {
                             slot.innerText = userChosenLetters[i].char;
                             slot.style.borderColor = 'var(--success-color)';
+                            
+                            // Gắn sự kiện click để hoàn tác: trả chữ này về lại hàng chờ
+                            const currentChosenItem = userChosenLetters[i];
+                            slot.addEventListener('click', () => {
+                                // Tìm phần tử tương ứng trong hàng chờ để bật lại trạng thái used = false
+                                currentChosenItem.used = false;
+                                // Xóa khỏi danh sách userChosenLetters
+                                userChosenLetters.splice(i, 1);
+                                renderScrambleBoard();
+                                document.getElementById('result-message').innerText = '';
+                            });
                         }
                         slotsContainer.appendChild(slot);
                     }
 
+                    // Render các nút chữ ở hàng chờ bên dưới
                     currentScrambleLetters.forEach((item, index) => {
                         const btn = document.createElement('button');
                         btn.className = 'letter-btn';
@@ -722,6 +889,7 @@
                     if (userWord.toLowerCase() === cleanWord.toLowerCase()) {
                         resultDiv.className = "result success";
                         resultDiv.innerText = `Chính xác! 🔊 (${scrambleTargetWord})`;
+                        triggerConfetti();
                         
                         if (correctWordObj.example) {
                             document.getElementById('example-text').innerText = correctWordObj.example;
@@ -774,6 +942,7 @@
                     if (input.toLowerCase() === correct.toLowerCase()) {
                         resultDiv.className = "result success";
                         resultDiv.innerText = `Chính xác! 🔊 (${correct})`;
+                        triggerConfetti();
                         
                         if (correctWordObj.example) {
                             document.getElementById('example-text').innerText = correctWordObj.example;
@@ -799,10 +968,9 @@
                     }
                 }
 
-                document.getElementById('btn-check-grammar').addEventListener('click', checkUserSentenceLocal);
-                document.getElementById('btn-check-ai').addEventListener('click', checkUserSentenceAI);
+                document.getElementById('btn-check-grammar').addEventListener('click', checkUserSentenceWithCompromise);
 
-                function checkUserSentenceLocal() {
+                function checkUserSentenceWithCompromise() {
                     const currentPool = getFilteredWords();
                     if (currentWordIndex === -1 || currentPool.length === 0) return;
                     const text = document.getElementById('user-sentence').value.trim();
@@ -818,30 +986,43 @@
                         return;
                     }
 
-                    const wordsInSentence = text.split(/\s+/).map(w => w.replace(/[^a-zA-Z]/g, '').toLowerCase());
-                    
+                    let doc = nlp(text);
+                    let normalizedSentenceText = doc.text().toLowerCase();
+                    let wordsInSentence = normalizedSentenceText.split(/\s+/).map(w => w.replace(/[^a-zA-Z]/g, ''));
+
                     if (!wordsInSentence.includes(target)) {
                         resultDiv.className = "result error";
-                        resultDiv.innerHTML = `❌ Lỗi vị trí/thiếu từ: Câu của bạn chưa chứa từ mục tiêu yêu cầu là "<strong>${correctWordObj.en}</strong>".`;
+                        resultDiv.innerHTML = `❌ Lỗi: Câu của bạn chưa chứa từ mục tiêu yêu cầu là "<strong>${correctWordObj.en}</strong>".`;
                         exampleBox.style.display = 'none';
                         return;
                     }
 
-                    let errors = [];
-                    if (text[0] !== text[0].toUpperCase()) {
-                        errors.push("• Câu nên bắt đầu bằng chữ cái viết hoa.");
-                    }
-                    if (!['.', '!', '?'].includes(text[text.length - 1])) {
-                        errors.push("• Câu nên kết thúc bằng dấu chấm (.), dấu chấm hỏi (?) hoặc dấu cảm (!).");
+                    let feedbackDetails = [];
+                    let sentences = doc.sentences().json();
+                    if (sentences.length === 0) {
+                        feedbackDetails.push("• Câu chưa đủ cấu trúc cú pháp cơ bản.");
+                    } else {
+                        let hasVerb = doc.has('#Verb');
+                        if (!hasVerb) {
+                            feedbackDetails.push("• Cảnh báo NLP: Câu có vẻ thiếu động từ chính (Verb).");
+                        }
                     }
 
-                    if (errors.length > 0) {
+                    if (text[0] !== text[0].toUpperCase()) {
+                        feedbackDetails.push("• Gợi ý: Câu nên bắt đầu bằng chữ cái viết hoa.");
+                    }
+                    if (!['.', '!', '?'].includes(text[text.length - 1])) {
+                        feedbackDetails.push("• Gợi ý: Câu nên kết thúc bằng dấu chấm (.), chấm hỏi (?) hoặc chấm than (!).");
+                    }
+
+                    if (feedbackDetails.length > 0) {
                         resultDiv.className = "result error";
-                        resultDiv.innerHTML = `⚠️ Phát hiện điểm cần cải thiện trong câu:<br>` + errors.join('<br>');
+                        resultDiv.innerHTML = `⚠️ <b>Compromise NLP phân tích - Cần cải thiện:</b><br>` + feedbackDetails.join('<br>');
                         exampleBox.style.display = 'none';
                     } else {
                         resultDiv.className = "result success";
-                        resultDiv.innerHTML = `✅ Tuyệt vời! Câu chứa đúng từ mục tiêu và thỏa mãn các quy tắc cơ bản.`;
+                        resultDiv.innerHTML = `✅ <b>Tuyệt vời!</b> Compromise NLP xác nhận câu chứa đúng từ mục tiêu "${correctWordObj.en}" và có cấu trúc ngữ pháp hợp lệ.`;
+                        triggerConfetti();
                         if (correctWordObj.example) {
                             document.getElementById('example-text').innerText = correctWordObj.example;
                             exampleBox.style.display = 'block';
@@ -850,6 +1031,8 @@
                         setTimeout(nextQuestion, 4000);
                     }
                 }
+
+                document.getElementById('btn-check-ai').addEventListener('click', checkUserSentenceAI);
 
                 async function checkUserSentenceAI() {
                     const apiKey = localStorage.getItem('my_openrouter_api_key');
@@ -904,6 +1087,7 @@
                             const aiReply = data.choices[0].message.content;
                             resultDiv.className = "result success";
                             resultDiv.innerHTML = `✨ <b>Đánh giá từ AI (OpenRouter):</b><br>${aiReply.replace(/\n/g, '<br>')}`;
+                            triggerConfetti();
                             if (correctWordObj.example) {
                                 document.getElementById('example-text').innerText = correctWordObj.example;
                                 exampleBox.style.display = 'block';
@@ -990,6 +1174,7 @@
                             if (opt === correctWordObj.en) {
                                 document.getElementById('result-message').className = "result success";
                                 document.getElementById('result-message').innerText = "Chính xác! 🔊";
+                                triggerConfetti();
                                 
                                 if (correctWordObj.example) {
                                     document.getElementById('example-text').innerText = correctWordObj.example;
@@ -1061,7 +1246,7 @@
                     wordEl.style.top = '0px';
                     document.getElementById('words-area').appendChild(wordEl);
 
-                    activeFallingWords.push({ element: wordEl, wordData: randomWord, y: 0, speed: 0.35 + (rocketScore * 0.02) });
+                    activeFallingWords.push({ element: wordEl, wordData: randomWord, x: randomX, y: 0, speed: 0.35 + (rocketScore * 0.02) });
                 }
 
                 function updateRocketGame() {
@@ -1077,6 +1262,70 @@
                     }
                 }
 
+                // --- HIỆU ỨNG TÊN LỬA BẮN PHÁ NỔ TUNG & TIẾNG BUM ---
+                function fireRocketAtTarget(targetItem, callback) {
+                    const canvasContainer = document.getElementById('game-canvas-container');
+                    const launcher = document.getElementById('rocket-launcher-icon');
+                    if (!canvasContainer || !launcher) {
+                        if (callback) callback();
+                        return;
+                    }
+
+                    const targetRect = targetItem.element.getBoundingClientRect();
+                    const containerRect = canvasContainer.getBoundingClientRect();
+
+                    // Di chuyển icon bệ phóng dưới cùng hướng về phía từ mục tiêu theo trục X
+                    const targetRelativeX = targetRect.left - containerRect.left + (targetRect.width / 2);
+                    launcher.style.left = targetRelativeX + 'px';
+
+                    // Tạo tên lửa bay từ đáy lên
+                    const missile = document.createElement('div');
+                    missile.className = 'flying-missile';
+                    const startX = targetRelativeX;
+                    const startY = containerRect.height - 20;
+                    missile.style.left = startX + 'px';
+                    missile.style.top = startY + 'px';
+                    canvasContainer.appendChild(missile);
+
+                    // Tính tọa độ đích của từ đang rơi
+                    const destX = targetItem.x + (targetRect.width / 2);
+                    const destY = targetItem.y;
+
+                    // Cho tên lửa bay tới mục tiêu
+                    setTimeout(() => {
+                        missile.style.top = destY + 'px';
+                        missile.style.left = destX + 'px';
+                    }, 20);
+
+                    // Khi tên lửa chạm mục tiêu: phát âm thanh "bum", tạo mảnh vỡ và xóa từ
+                    setTimeout(() => {
+                        missile.remove();
+                        playBoomSound(); // Phát âm thanh nổ bum
+
+                        // Tạo hiệu ứng mảnh vỡ văng tứ tung (particle explosion)
+                        const explosionColors = ['#ff4757', '#ffa502', '#ff6b81', '#f1f2f6', '#eccc68'];
+                        for (let p = 0; p < 18; p++) {
+                            const particle = document.createElement('div');
+                            particle.className = 'explosion-particle';
+                            particle.style.backgroundColor = explosionColors[Math.floor(Math.random() * explosionColors.length)];
+                            particle.style.left = destX + 'px';
+                            particle.style.top = destY + 'px';
+
+                            const angle = Math.random() * Math.PI * 2;
+                            const distance = 30 + Math.random() * 70;
+                            particle.style.setProperty('--dx', `${Math.cos(angle) * distance}px`);
+                            particle.style.setProperty('--dy', `${Math.sin(angle) * distance}px`);
+
+                            canvasContainer.appendChild(particle);
+                            setTimeout(() => particle.remove(), 500);
+                        }
+
+                        // Xóa từ mục tiêu
+                        targetItem.element.remove();
+                        if (callback) callback();
+                    }, 260);
+                }
+
                 document.getElementById('rocket-input').addEventListener('input', () => {
                     if (isGameOver) return;
                     const inputEl = document.getElementById('rocket-input');
@@ -1086,11 +1335,14 @@
                         let item = activeFallingWords[i];
                         if (item.wordData.en.toLowerCase() === typedText) {
                             speakWord(item.wordData.en);
-                            item.element.remove();
-                            activeFallingWords.splice(i, 1);
-                            rocketScore += 1;
-                            document.getElementById('rocket-score').innerText = rocketScore;
                             inputEl.value = '';
+                            
+                            // Gọi hiệu ứng bắn tên lửa và nổ tung
+                            fireRocketAtTarget(item, () => {
+                                activeFallingWords.splice(i, 1);
+                                rocketScore += 1;
+                                document.getElementById('rocket-score').innerText = rocketScore;
+                            });
                             break;
                         }
                     }
@@ -1116,7 +1368,7 @@
                 function startPlaylist() {
                     if (isPlayingList) return;
                     const listToPlay = getFilteredWords();
-                    if (listToPlay.length === 0) { alert('Danh sách trống!'); return; }
+                    if (listToPlay.length === 0) { showToast('Danh sách trống!', 'error'); return; }
                     isPlayingList = true;
                     let index = 0;
 
@@ -1157,6 +1409,7 @@
                     dl.setAttribute("href", dataStr);
                     dl.setAttribute("download", "vocab_backup.json");
                     document.body.appendChild(dl); dl.click(); dl.remove();
+                    showToast('Đã xuất dữ liệu thành công!');
                 });
 
                 document.getElementById('btn-import-trigger').addEventListener('click', () => {
@@ -1180,8 +1433,8 @@
                             updateCategoryDropdowns();
                             saveWords();
                             if (currentMode !== 'rocket') nextQuestion();
-                            alert('Nhập dữ liệu thành công!');
-                        } catch(err) { alert('File không hợp lệ!'); }
+                            showToast('Nhập dữ liệu thành công!');
+                        } catch(err) { showToast('File không hợp lệ!', 'error'); }
                     };
                     if (event.target.files[0]) reader.readAsText(event.target.files[0]);
                 });
